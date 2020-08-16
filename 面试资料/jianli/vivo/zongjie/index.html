@@ -1,0 +1,367 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>总结/精选生成器</title>
+
+<script src="js/vue.min.js"></script>
+<script src="js/base.js"></script>
+<link rel="stylesheet" type="text/css" href="css/reset.css">
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?d2b06d61bdb4bafd4a2338c50dc566a4";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</head>
+
+<style>
+
+*{font-family:"Microsoft YaHei", "SimSun";color:#282828;}
+#app,html,body{height:100%;overflow:hidden;}
+body{font-size:14px;line-height:18px;background:rgb(44, 52, 55);}
+.left{background:#fff;position:absolute;left:0;right:758px;bottom:0;top:0;overflow:auto;}
+.right{float:right;width:748px;height:100%;overflow:hidden;font-size:12px;line-height:18px;position:relative;}
+pre {white-space: pre-wrap;word-wrap: break-word;}
+.title{font-size: 18px;color: #344665;height: 21px;line-height: 21px;margin-bottom: 6px;text-align:center;}
+table td{vertical-align:top;padding:2px;line-height:30px;}
+input[type='text']{height: 30px;}
+input[type='text'],textarea{border: 1px solid #D2D5DB;border-radius: 2px;padding:5px;}
+input[type='text']:focus,textarea:focus{border-color: #96c4ff !important;box-shadow: 0 0 4px rgba(150,196,255,0.8);outline:none;}
+input[type='text'],textarea{width:100%;box-sizing:border-box;}
+label{cursor:pointer;}
+img{max-width: 100%;}
+input[type='checkbox']{margin:0;}
+.cell-group{background:#fff;border-radius: 10px;margin:20px;margin-bottom: 10px;}
+.btn{background: #00A7F6;color:#fff;border: 0;border-radius: 37px;font-size: 14px;height:30px;line-height:30px;cursor:pointer;outline:none;box-sizing:border-box;padding:0 20px;}
+.btn:hover{opacity: 0.9;}
+hr.l{height: 1px;    border: none;    background: #CDCDCD;    color: #CDCDCD;margin:0 10px;}
+.edit a{color:#369;}
+::-webkit-scrollbar {width:5px;height:5px;background-color: #F5F5F5}
+::-webkit-scrollbar-track {background-color: #F5F5F5;}
+::-webkit-scrollbar-thumb {background-color: #c3c2c2;border-radius: 5px;  }
+::-webkit-scrollbar-thumb:hover {background-color: #999;}
+.right .top{position:absolute;top:0;bottom:200px;right:0;left:0;background:#fff;border-radius:0 0 0 4px;padding:20px 0;}
+.right .rightContent{overflow:auto;height:100%;margin:0 20px;}
+.right .bottom{position:absolute;height:150px;width:100%;overflow:auto;left:0;bottom:0;background:#fff;border-radius:4px 0 0 0;padding:20px 0;}
+.cell-js{border:1px solid #d8d8d8;padding:10px;background:#fcfcfc;}
+.cell-pt{border:1px solid #d8d8d8;padding:10px;border-radius:8px;margin-bottom: 10px;}
+</style>
+
+<body>
+
+<div id="app">
+	<div class="left">
+        <div class="cell-group">
+            <table width="100%">
+                <colgroup>
+                    <col width="100">
+                </colgroup>
+                <tr>
+                    <td>开篇语：</td>
+                    <td><textarea v-model="shouyu" name="" id="" cols="30" rows="8"></textarea></td>
+                </tr>
+                <tr>
+                    <td>开篇图：</td>
+                    <td><input v-model="shoutu" type="text"></td>
+                </tr>
+                <tr>
+                    <td>开篇总结：</td>
+                    <td><textarea v-model="kaipian" name="" id="" cols="30" rows="4"></textarea></td>
+                </tr>
+                
+            </table>
+        </div>
+        
+        <p class="title">内容介绍</p>
+        <template v-for="(item, itemindex) in data">
+        	<div class="cell-group cell-js">
+            	<p style="text-align:right;"><a href="javascript:" v-on:click="delGroup(itemindex)">删除本组</a></p>
+                <table width="100%">
+                    <colgroup>
+                        <col width="100">
+                    </colgroup>
+                    <tr>
+                        <td>分组标题：</td>
+                        <td><input v-model="item.groupName" type="text"></td>
+                    </tr>
+                </table>
+                
+                <template v-for="(list, listIndex) in item.lists">
+                	<div class="cell-pt">
+                        <table width="100%">
+                            <colgroup>
+                                <col width="100">
+                                <col>
+                                <col width="100">
+                                <col >
+                            </colgroup>
+                            
+                            <tr>
+                                <td colspan="4"><a href="javascript:" v-on:click="delImgGroup(listIndex,item.lists)">删除本组配图</a></td>
+                            </tr>
+                            <tr v-for="(img, imgIndex) in list.imgs">
+                                <td>配图：</td>
+                                <td><input v-model="img.src" type="text"></td>
+                                <td>
+                                    <label ><input type="checkbox" v-model="img.video"> 设为视频</label>
+                                </td>
+                                <td><a href="javascript:" v-on:click="delImg(imgIndex,list)">删除配图</a></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><input type="button" class="btn" value="+ 增加一张配图" v-on:click="addImg(list)"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                        <table width="100%">
+                            <colgroup>
+                                <col width="100">
+                            </colgroup>
+                            <tr>
+                                <td>配文：</td>
+                                <td><textarea v-model="list.des" name="" id="" cols="30" rows="4"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td>帖子作者：</td>
+                                <td><input v-model="list.user" type="text"></td>
+                            </tr>
+                            <tr>
+                                <td>帖子链接：</td>
+                                <td><input v-model="list.link" type="text"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </template>
+                <p style="margin-top:10px;text-align:center;"><input type="button" class="btn" value="增加一组图文" v-on:click="addImgGroup(item)"></p>
+            </div>
+        </template>
+        
+        <div class="cell-group">
+        	<input type="button" class="btn" value="增加一组内容介绍" v-on:click="addGroup()">
+		</div>
+        
+        <p class="title">结尾总结</p>
+        <div class="cell-group">
+            <table width="100%">
+                <colgroup>
+                    <col width="100">
+                </colgroup>
+                <tr>
+                    <td>结束语：</td>
+                    <td><textarea v-model="end" name="" id="" cols="30" rows="4"></textarea></td>
+                </tr>
+
+                <tr>
+                    <td>推荐：</td>
+                    <td><textarea v-model="tuijian" name="" id="" cols="30" rows="8" v-on:input="setTuijian()"></textarea></td>
+                </tr>
+                
+            </table>
+        </div>
+        
+    
+    </div>
+    
+    <div class="right">
+    
+    	<div class="top">
+            <div class="rightContent" style="font-size:16px;color:DimGray;line-height:26px;">
+    
+                <p>{{shouyu}}</p>
+                <br>
+                <template v-if="shoutu">
+                    <p><img :src="shoutu"></p>
+                    <br>
+                </template>
+                <template v-if="kaipian">
+                    <p>{{kaipian}}</p>
+                </template>
+                <div v-for="item in data">
+                    <br>
+                    <div style="text-align: center;">
+                        <img src="https://bbsfiles.vivo.com.cn/vivobbs/attachment/album/201907/17/184641rqmqyioaeia4i176.png">
+                    </div>
+                    <br>
+                    <br>
+                    <p v-if="item.groupName" style="color:Red;text-align:center;">{{item.groupName}}</p>
+                    <br>
+                    <div v-for="list in item.lists">
+                        <p v-for="img in list.imgs" style="text-align:center">
+                            <img :src="img.src" alt="">
+                        </p>
+                        <br>
+                        {{list.des}}——{{list.user}} <a :href="list.link" target="_blank">查看原文</a>
+                    </div>
+                </div>
+                <br>
+                <p>{{end}}</p>
+                <br/>
+                <div><b>...相关精彩推荐...</b></div>
+                <div v-for="(item, index) in tuijianArray">{{index+1}}.<a :href="item.link" target="_blank">{{item.text}}</a></div>
+            </div>
+        </div>
+        <div class="bottom">
+	        <div class="rightContent">
+<div style="width:100%;" contenteditable="true">
+    <div>[size=4][color=DimGray]</div>
+    <p v-if="shouyu">{{shouyu}}</p>
+    <template v-if="shoutu">
+        <div>[align=center][img]{{shoutu}}[/img][/align]</div>
+    </template>
+    <template v-if="kaipian">
+        <p>{{kaipian}}</p>
+    </template>
+
+    <div v-for="item in data">
+        <div>[align=center][img]https://bbsfiles.vivo.com.cn/vivobbs/attachment/album/201907/17/184641rqmqyioaeia4i176.png[/img][/align]</div>
+        <div v-if="item.groupName">[align=center][color=Red]{{item.groupName}}[/color][/align]</div>
+        <div v-for="list in item.lists">
+            <div v-for="img in list.imgs" v-if="img.src">[align=center][img]{{img.src}}[/img][/align]</div>
+            <div>{{list.des}} ——{{list.user}} [url={{list.link}}]查看原文[/url]</div>
+			<br>
+       </div>
+    </div>
+    <div>{{end}}</div>
+    <br/>
+    <div>[b]...相关精彩推荐...[/b]</div>
+    <div v-for="(item, index) in tuijianArray">{{index+1}}.[url={{item.link}}]{{item.text}}[/url]</div>
+    <div>[/color][/size]</div>
+</div>
+	        </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+	var app = new Vue({
+	  el: '#app',
+	  data: {
+		shouyu:"西柚头戴式蓝牙降噪耳机是一款支持主动降噪的头戴式蓝牙耳机，听音乐时能有效减少环境噪音的影响，无论何时何地，都能助你沉浸享受。全新设计的40mm钕铁硼单元和金属封闭音腔，能带来高保真的音质体验，并且集成数字降噪的360°高灵敏麦克风，除了听音乐之外，在嘈杂的户外，还能安心接听电话，或者吃鸡时能时刻与队友保持高清语音交流。",
+		shoutu:"https://bbsfiles.vivo.com.cn/vivobbs/attachment/forum/201901/29/215959oa4a5jrwhjye4y4x.jpg.thumb.jpg",
+		kaipian:"第7期的评测已经结束，我们来看看本期的评测体验V粉们怎么说吧。",
+		data:[
+			{
+				groupName:"【外观评测】",
+				lists:[
+					{
+						imgs:[
+							{
+								src:"https://bbsfiles.vivo.com.cn/vivobbs/attachment/forum/201901/29/220008vv2732hdx7v82ox1.jpg.thumb.jpg",
+								video:false
+							}
+						],
+						des:"西柚头戴式蓝牙降噪耳机采用了黑色至简的包装设计，包装背面是耳机的基本信息，耳机整个配色为黑色，第一感觉简约高档。打开包装的一瞬间，我让身边的小伙伴猜价格，最低估计699，可见其实打实的做工。",
+						user:"屋神",
+						link:"http://bbs.vivo.com.cn/forum.php?mod=viewthread&tid=4217231"
+					}
+				]
+			},
+			{
+				groupName:"【音质体验】",
+				lists:[
+					{
+						imgs:[
+							{
+								src:"https://bbsfiles.vivo.com.cn/vivobbs/attachment/forum/201901/31/220244qb7see726bqwq26d.jpg.thumb.jpg",
+								video:false
+							}
+						],
+						des:"西柚X-PRO ANC 耳机，顾名思义这是一款带有主动降噪功能的耳机，拥有的ANC独立数字降噪功能，能大大减少环境噪音的影响。主动降噪功能就是通过降噪系统产生与外界噪音相等的反向声波，将噪音中和，从而实现降噪的效果。拥有西柚X-PRO ANC 主动降噪耳机，无论是每天往返于不同城市之间的商务人士，还是天天挤地铁的上班族，抑或是需要在优美的音乐中思考策划方案的办公室一族，都能独自享受音乐的美好。",
+						user:"海风一瓢",
+						link:"http://bbs.vivo.com.cn/forum.php?mod=viewthread&tid=4220762"
+					}
+				]
+			}
+		],
+		end:"看到这些西柚耳机的分享，你心动了吗？现在这款西柚蓝牙降噪耳机已经可以前往vivo线上商城或线下专卖店购买。",
+        tuijian:"V众测18期丨199元沃丁声波电动牙刷，0元试用1\nhttps://bbs.vivo.com.cn/forum.php?mod=viewthread&tid=5489204\nV众测18期丨199元沃丁声波电动牙刷，0元试用2\nhttps://bbs.vivo.com.cn/forum.php?mod=viewthread&tid=5489204\nV众测18期丨199元沃丁声波电动牙刷，0元试用3\nhttps://bbs.vivo.com.cn/forum.php?mod=viewthread&tid=5489204",
+        tuijianArray:[]
+	  },
+      mounted: function () {
+        this.setTuijian();
+      },
+	  methods:{
+        setTuijian:function(){
+            var self = this;
+            var tuijian = this.tuijian.split("\n");
+            
+            var cachArray = [];
+            _.each(tuijian,function(item,index){
+                if(item != "" && item != "(出处: vivo智能手机V粉社区)"){
+                    cachArray.push(item);
+                }
+            })
+
+            self.tuijianArray = [];
+            _.each(cachArray,function(item,index){
+                if(index %2 == 0){
+                    self.tuijianArray.push({
+                        text: item,
+                        link: cachArray[index + 1] || ""
+                    })
+                }
+            })
+          },
+		  addImg:function(list){
+			  list.imgs.push({
+							src:"",
+							video:false
+						})
+		  },
+		  delImg:function(imgIndex,list){
+			  list.imgs.splice(imgIndex,1);
+		  },
+          delImgGroup:function(listIndex,list){
+            debugger;
+            list.splice(listIndex,1);
+          },
+		  addImgGroup:function(item){
+			  item.lists.push({
+				imgs:[
+					{
+						src:"",
+						video:false
+					}
+				],
+				des:"",
+				user:"",
+				link:""
+			})
+	      },
+		  addGroup:function(imgIndex,list){
+			  this.data.push(
+			  	{
+				groupName:"",
+				lists:[
+					{
+							imgs:[
+								{
+									src:"",
+									video:false
+								}
+							],
+							des:"",
+							user:"",
+							link:""
+						}
+					]
+				}
+			  )
+		  },
+		  delGroup:function(itemindex){
+			  this.data.splice(itemindex,1)
+		  }
+	  }
+	})
+</script>
+
+</body>
+</html>

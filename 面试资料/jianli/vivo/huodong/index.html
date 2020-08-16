@@ -1,0 +1,284 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>众测活动生成器</title>
+
+<script src="js/vue.min.js"></script>
+<script src="js/base.js"></script>
+<link rel="stylesheet" type="text/css" href="css/reset.css">
+</head>
+
+<style>
+
+*{font-family:"Microsoft YaHei", "SimSun";color:#282828;}
+b{font-weight: bold;}
+#app,html,body{height:100%;overflow:hidden;}
+body{font-size:14px;line-height:18px;background:rgb(44, 52, 55);}
+.left{background:#fff;position:absolute;left:0;right:758px;bottom:0;top:0;overflow:auto;}
+.right{float:right;width:748px;height:100%;overflow:hidden;font-size:12px;line-height:18px;position:relative;}
+pre {white-space: pre-wrap;word-wrap: break-word;}
+.title{font-size: 18px;color: #344665;height: 21px;line-height: 21px;margin-bottom: 6px;text-align:center;}
+table td{vertical-align:top;padding:2px;line-height:30px;}
+input[type='text']{height: 30px;}
+input[type='text'],textarea{border: 1px solid #D2D5DB;border-radius: 2px;padding:5px;}
+input[type='text']:focus,textarea:focus{border-color: #96c4ff !important;box-shadow: 0 0 4px rgba(150,196,255,0.8);outline:none;}
+input[type='text'],textarea{width:100%;box-sizing:border-box;}
+label{cursor:pointer;}
+input[type='checkbox']{margin:0;}
+.cell-group{background:#fff;border-radius: 10px;margin:20px;margin-bottom: 10px;}
+.btn{background: #00A7F6;color:#fff;border: 0;border-radius: 37px;font-size: 14px;height:30px;line-height:30px;cursor:pointer;outline:none;box-sizing:border-box;padding:0 20px;}
+.btn:hover{opacity: 0.9;}
+hr.l{height: 1px;    border: none;    background: #CDCDCD;    color: #CDCDCD;margin:0 10px;}
+.edit a{color:#369;}
+::-webkit-scrollbar {width:5px;height:5px;background-color: #F5F5F5}
+::-webkit-scrollbar-track {background-color: #F5F5F5;}
+::-webkit-scrollbar-thumb {background-color: #c3c2c2;border-radius: 5px;  }
+::-webkit-scrollbar-thumb:hover {background-color: #999;}
+.right .top{position:absolute;top:0;bottom:200px;right:0;left:0;background:#fff;border-radius:0 0 0 4px;padding:20px 0;}
+.right .rightContent{overflow:auto;height:100%;margin:0 20px;}
+.right .bottom{position:absolute;height:150px;width:100%;overflow:auto;left:0;bottom:0;background:#fff;border-radius:4px 0 0 0;padding:20px 0;}
+.cell-js{border:1px solid #d8d8d8;padding:10px;background:#fcfcfc;}
+.cell-pt{border:1px solid #d8d8d8;padding:10px;border-radius:8px;margin-bottom: 10px;}
+</style>
+
+<body>
+
+<div id="app">
+	<div class="left">
+        <div class="cell-group">
+            <table width="100%">
+                <colgroup>
+                    <col width="100">
+                </colgroup>
+                <tr>
+                    <td>产品名称：</td>
+                    <td><input type="text" v-model="mingcheng" name="" id="" cols="30" rows="8"/></td>
+                </tr>
+                <tr>
+                    <td>价值：</td>
+                    <td><input type="text" v-model="jiazhi" name="" id="" cols="30" rows="8"/></td>
+                </tr>
+                <tr>
+                    <td>第几期：</td>
+                    <td>
+                        <input v-model="num" type="text" name="">
+                </tr>
+                <tr>
+                    <td>评测数量：</td>
+                    <td><input type="text" v-model="zonggong" name="" id="" cols="30" rows="8"/></td>
+                </tr>
+                <tr>
+                    <td>产品介绍：</td>
+                    <td><textarea v-model="jieshao" name="" id="" cols="30" rows="8"></textarea></td>
+                </tr>
+                <tr>
+                    <td>开始申请时间：</td>
+                    <td><input type="text" v-model="time" name="" id="" cols="30" rows="4"/></td>
+                </tr>
+                <tr>
+                    <td>申请表单地址：</td>
+                    <td><input type="text" v-model="sqdz" name="" id="" cols="30" rows="4"/></td>
+                </tr>
+                <tr>
+                    <td>产品详情链接：</td>
+                    <td><input type="text" v-model="link" name="" id="" cols="30" rows="4"/></td>
+                </tr>
+                <tr>
+                    <td>一等奖：</td>
+                    <td><input type="text" v-model="jp1" name="" id="" cols="30" rows="4"/></td>
+                </tr>
+                <tr>
+                    <td>二等奖：</td>
+                    <td><input type="text" v-model="jp2" name="" id="" cols="30" rows="4"/></td>
+                </tr>
+                <tr>
+                    <td>三等奖：</td>
+                    <td><input type="text" v-model="jp3" name="" id="" cols="30" rows="4"/></td>
+                </tr>
+                <tr>
+                    <td>推荐：</td>
+                    <td><textarea v-model="tuijian" name="" id="" cols="30" rows="8" v-on:input="setTuijian()"></textarea></td>
+                </tr>
+            </table>
+        </div>
+    
+    </div>
+    
+    <div class="right">
+    
+    	<div class="top">
+            <div class="rightContent" style="font-size:16px;color:DimGray;line-height:26px;">
+                    <div>V众测继续上新啦！</div>
+                    <div>记得持续关注V众测，我们将会持续为大家提供各种产品的免费试用机会。</div>
+                    <div><b>在V众测，只要你的体验报告足够出色，试用产品就不用归还，而且还能赢取其它礼品！</b></div>
+                    <div>还等什么，赶快报名吧！</div>
+                    <br/>
+                    <div>{此处放产品图}</div>
+                    <div style="text-align: center;"><a :href="sqdz" target="_blank">（点击申请）</a></div>
+                    <br/>
+                    <div><b>【本期体验产品】</b></div>
+                    <div><b>价值{{jiazhi}}元的{{mingcheng}}。</b></div>
+                    <br/>
+                    <div>{{jieshao}}<a target="_blank" :href="link">点击可查看产品详细介绍！</a></div>
+                    <br/>
+                    <div><b>【活动时间】</b></div>
+                    <div>试用申请：{{time}}——{{getData(6)}}</div>
+                    <div>收集地址/邮寄产品：{{getData(7)}}——{{getData(9)}}</div>
+                    <div>撰写并发布评测报告：{{getData(23)}}前</div>
+                    <div>试用产品寄回：{{getData(30)}}前（体验评测加精的用户不用寄回）</div>
+                    <br/>
+                    <div><b>【报名方式】</b></div>
+                    <div>「{{mingcheng}}」{{zonggong}}名，<a target="_blank" :href="sqdz">戳我报名</a>，详细填写申请理由机会更大！</div>
+                    <br/>
+                    <div><b>【资格评选】</b></div>
+                    <div>根据大家填写报名信息的申请理由、社区活跃度等多方面进行评选；</div>
+                    <br/>
+                    <div><b>【活动奖品】</b></div>
+                    <div>1、在规定的时间内完成体验评测，如果体验评测文章被加精华，即可直接获得试用产品！不限量，只要体验评测文章质量过硬就送！至于文章没获得加精的用户，则需要按时寄回试用产品。</div>
+                    <br/>
+                    <div>2、在精华文章中，根据体验文章的内容，从文字、图片质量、产品特点体现、创意玩法、帖子相互动，以及文章发布到第三方自媒体平台的数量等多维度进行二次评奖。回复最多的帖子评选为人气奖，如与一二三等奖重复，则顺延。</div>
+                    <br/>
+                    <div>奖品：</div>
+                    <div>一等奖：{{jp1}}</div>
+                    <div>二等奖：{{jp2}}</div>
+                    <div>三等奖：{{jp3}}</div>
+                    <br/>
+                    <div>{此处放产品图}</div>
+                    <br/>
+                    <div><b>【活动规则】</b></div>
+                    <div>1、所有报名V粉请务必关注公布获得众测的名单，并及时提交相关信息，逾期提交资格失效；拿到试用资格的V粉必须单独签署试用协议，否则取消试用资格；</div>
+                    <div>2、此次产品试用期间在社区发布的试用帖子至少有1篇深度评测帖，首发vivo社区，深度测评帖必须包括外观赏析、实际使用体验和产品评价三个部分，≥10张图片+1000字。</div>
+                    <div>3、测评帖标题须为：【V众测第{{num}}期】+自定义标题；发在V众测-评测晒单板块；测评必须原创，一经发现盗用、改编他人作品，立即取消评奖资格并严肃处理。</div>
+                    <div>4、上传作品必须严格遵守国家相关法律规定。</div>
+                    <div>5、在法律允许的范围内本活动解释权归V粉社区所有。</div>
+                    <br/>
+                    <div><b>...相关精彩推荐...</b></div>
+                    <div v-for="(item, index) in tuijianArray">{{index+1}}.<a :href="item.link" target="_blank">{{item.text}}</a></div>
+            </div>
+        </div>
+        <div class="bottom">
+	        <div class="rightContent">
+                <div style="width:100%;" contenteditable="true">
+                    <div>[size=4]V众测继续上新啦！</div>
+                    <div>记得持续关注V众测，我们将会持续为大家提供各种产品的免费试用机会。</div>
+                    <div>[b]在V众测，只要你的体验报告足够出色，试用产品就不用归还，而且还能赢取其它礼品！[/b]</div>
+                    <div>还等什么，赶快报名吧！</div>
+                    <br/>
+                    <div>{此处放产品图}</div>
+                    <div>[align=center][url={{sqdz}}]（点击申请）[/url][/align]</div>
+                    <br/>
+                    <div>[b]【本期体验产品】[/b]</div>
+                    <div>[b]价值{{jiazhi}}元的{{mingcheng}}。[/b]</div>
+                    <br/>
+                    <div>{{jieshao}}[url={{link}}]点击可查看产品详细介绍！[/url]</div>
+                    <br/>
+                    <div>[b]【活动时间】[/b]</div>                    
+                    <div>试用申请：{{time}}——{{getData(6)}}</div>
+                    <div>收集地址/邮寄产品：{{getData(7)}}——{{getData(9)}}</div>
+                    <div>撰写并发布评测报告：{{getData(23)}}前</div>
+                    <div>试用产品寄回：{{getData(30)}}前（体验评测加精的用户不用寄回）</div>
+                    <br/>
+                    <div>[b]【报名方式】[/b]</div>
+                    <div>「{{mingcheng}}」{{zonggong}}名，[url={{sqdz}}]戳我报名[/url]，详细填写申请理由机会更大！</div>
+                    <br/>
+                    <div>[b]【资格评选】[/b]</div>
+                    <div>根据大家填写报名信息的申请理由、社区活跃度等多方面进行评选；</div>
+                    <br/>
+                    <div>[b]【活动奖品】[/b]</div>
+                    <div>1、在规定的时间内完成体验评测，如果体验评测文章被加精华，即可直接获得试用产品！不限量，只要体验评测文章质量过硬就送！至于文章没获得加精的用户，则需要按时寄回试用产品。</div>
+                    <br/>
+                    <div>2、在精华文章中，根据体验文章的内容，从文字、图片质量、产品特点体现、创意玩法、帖子相互动，以及文章发布到第三方自媒体平台的数量等多维度进行二次评奖。回复最多的帖子评选为人气奖，如与一二三等奖重复，则顺延。</div>
+                    <br/>
+                    <div>奖品：</div>
+                    <div>一等奖：{{jp1}}</div>
+                    <div>二等奖：{{jp2}}</div>
+                    <div>三等奖：{{jp3}}</div>
+                    <br/>
+                    <div>{此处放奖品图}</div>
+                    <br/>
+                    <div>[b]【活动规则】[/b]</div>
+                    <div>1、所有报名V粉请务必关注公布获得众测的名单，并及时提交相关信息，逾期提交资格失效；拿到试用资格的V粉必须单独签署试用协议，否则取消试用资格；</div>
+                    <div>2、此次产品试用期间在社区发布的试用帖子至少有1篇深度评测帖，首发vivo社区，深度测评帖必须包括外观赏析、实际使用体验和产品评价三个部分，≥10张图片+1000字。</div>
+                    <div>3、测评帖标题须为：【V众测第{{num}}期】+自定义标题；发在V众测-评测晒单板块；测评必须原创，一经发现盗用、改编他人作品，立即取消评奖资格并严肃处理。</div>
+                    <div>4、上传作品必须严格遵守国家相关法律规定。</div>
+                    <div>5、在法律允许的范围内本活动解释权归V粉社区所有。</div>
+                    <br/>
+                    <div>[b]...相关精彩推荐...[/b]</div>
+                    <div v-for="(item, index) in tuijianArray">{{index+1}}.[url={{item.link}}]{{item.text}}[/url]</div>
+                    <div>[/size]</div>
+                </div>
+	        </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+	var app = new Vue({
+	  el: '#app',
+	  data: {
+		mingcheng:"乐心体脂秤S11",
+		jieshao:"沃丁声波电动牙刷，只有230g轻重量，简约方便，易携带，易收纳；有效承托腰部，缓解压力；100%棉材质，亲肤透气；进口EPS微颗粒，随意挤压，环保无危害；可拆卸独立内胆，清洗更方便",
+        jiazhi:"199",
+        zonggong:5,
+        qianglou:2,
+        link:"https://shop.vivo.com.cn/product/10608",//产品链接
+        time:"2020-04-01",
+        num:20,
+        sqdz:"http://zenglvxin.mikecrm.com/3Bp4XWM",//报名链接
+        jp1:"Martube 三合一手机镜头 x1",
+        jp2:"Kappa 保温杯 X1",
+        jp3:"HYUNDA 无线蓝牙音箱i80 x1",
+        tuijian:"V众测18期丨199元沃丁声波电动牙刷，0元试用1\nhttps://bbs.vivo.com.cn/forum.php?mod=viewthread&tid=5489204\nV众测18期丨199元沃丁声波电动牙刷，0元试用2\nhttps://bbs.vivo.com.cn/forum.php?mod=viewthread&tid=5489204\nV众测18期丨199元沃丁声波电动牙刷，0元试用3\nhttps://bbs.vivo.com.cn/forum.php?mod=viewthread&tid=5489204",
+        tuijianArray:[]
+	  },
+      mounted: function () {
+        this.setTuijian();
+      },
+	  methods:{
+          setTuijian:function(){
+            var self = this;
+            var tuijian = this.tuijian.split("\n");
+            
+            var cachArray = [];
+            _.each(tuijian,function(item,index){
+                if(item != "" && item != "(出处: vivo智能手机V粉社区)"){
+                    cachArray.push(item);
+                }
+            })
+
+            self.tuijianArray = [];
+            _.each(cachArray,function(item,index){
+                if(index %2 == 0){
+                    self.tuijianArray.push({
+                        text: item,
+                        link: cachArray[index + 1] || ""
+                    })
+                }
+            })
+          },
+		  getData:function(day){
+            if(!this.time){
+                return "";
+            }
+            var date = new Date(this.time);
+            var newDate = new Date(date.setDate(date.getDate() + day));
+            var year = newDate.getFullYear();
+            var month = newDate.getMonth()+1;
+            if(month <10){
+                month = "0" + month;
+            }
+            var day =  newDate.getDate();
+            if(day <10){
+                day = "0" + day;
+            }
+            
+            return year + "-" + month + "-" + day;
+          }
+	  }
+	})
+</script>
+
+</body>
+</html>

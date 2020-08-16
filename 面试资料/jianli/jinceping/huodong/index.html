@@ -1,0 +1,337 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>众测活动生成器</title>
+
+<script src="js/vue.min.js"></script>
+<script src="js/base.js"></script>
+<link rel="stylesheet" type="text/css" href="css/reset.css">
+</head>
+
+<style>
+
+*{font-family:"Microsoft YaHei", "SimSun";color:#282828;}
+b{font-weight: bold;}
+#app,html,body{height:100%;overflow:hidden;}
+body{font-size:14px;line-height:18px;background:rgb(44, 52, 55);}
+.left{background:#fff;position:absolute;left:0;right:803px;bottom:0;top:0;overflow:auto;}
+.right{float:right;width:795px;height:100%;overflow:hidden;font-size:12px;line-height:18px;position:relative;}
+pre {white-space: pre-wrap;word-wrap: break-word;}
+.title{font-size: 18px;color: #344665;height: 21px;line-height: 21px;margin-bottom: 6px;text-align:center;}
+table td{vertical-align:top;padding:2px;line-height:30px;}
+input[type='text']{height: 30px;}
+input[type='text'],textarea{border: 1px solid #D2D5DB;border-radius: 2px;padding:5px;}
+input[type='text']:focus,textarea:focus{border-color: #96c4ff !important;box-shadow: 0 0 4px rgba(150,196,255,0.8);outline:none;}
+input[type='text'],textarea{width:100%;box-sizing:border-box;}
+label{cursor:pointer;}
+input[type='checkbox']{margin:0;}
+.cell-group{background:#fff;border-radius: 10px;margin:20px;margin-bottom: 10px;}
+.btn{background: #00A7F6;color:#fff;border: 0;border-radius: 37px;font-size: 14px;height:30px;line-height:30px;cursor:pointer;outline:none;box-sizing:border-box;padding:0 20px;}
+.btn:hover{opacity: 0.9;}
+hr.l{height: 1px;    border: none;    background: #CDCDCD;    color: #CDCDCD;margin:0 10px;}
+.edit a{color:#369;}
+::-webkit-scrollbar {width:5px;height:5px;background-color: #F5F5F5}
+::-webkit-scrollbar-track {background-color: #F5F5F5;}
+::-webkit-scrollbar-thumb {background-color: #c3c2c2;border-radius: 5px;  }
+::-webkit-scrollbar-thumb:hover {background-color: #999;}
+.right .top{position:absolute;top:0;bottom:200px;right:0;left:0;background:#fff;border-radius:0 0 0 4px;padding:20px 0;}
+.right .rightContent{overflow:auto;height:100%;margin:0 20px;}
+.right .bottom{position:absolute;height:150px;width:100%;overflow:auto;left:0;bottom:0;background:#fff;border-radius:4px 0 0 0;padding:20px 0;}
+.cell-js{border:1px solid #d8d8d8;padding:10px;background:#fcfcfc;}
+.cell-pt{border:1px solid #d8d8d8;padding:10px;border-radius:8px;margin-bottom: 10px;}
+.content p {
+    text-indent: 2.2em;
+    margin: 0px 0px 10px;
+    line-height: 2em;
+    letter-spacing: 0.06em;
+    color: #555;
+    font-size: 14px;
+}
+.content pre {
+    line-height: 30px;
+    background: #F9F9F9;
+    color: #099;
+    padding: 0 10px;
+    margin: 0;
+}
+.content pre, .content code {
+    word-break: break-all;
+    word-wrap: break-word;
+}
+</style>
+
+<body>
+
+<div id="app">
+	<div class="left">
+        <div class="cell-group">
+            <table width="100%">
+                <colgroup>
+                    <col width="100">
+                </colgroup>
+                <tr>
+                    <td>产品名称：</td>
+                    <td><input type="text" v-model="mingcheng" name="" id="" cols="30" rows="8"/></td>
+                </tr>
+                <tr>
+                    <td>价值：</td>
+                    <td><input type="text" v-model="jiazhi" name="" id="" cols="30" rows="8"/></td>
+                </tr>
+                <tr>
+                    <td>第几期：</td>
+                    <td>
+                        <input v-model="num" type="text" name="">
+                </tr>
+                <tr>
+                    <td>评测数量：</td>
+                    <td><input type="text" v-model="zonggong" name="" id="" cols="30" rows="8"/></td>
+                </tr>
+                <!-- <tr>
+                    <td>产品介绍：</td>
+                    <td><textarea v-model="jieshao" name="" id="" cols="30" rows="8"></textarea></td>
+                </tr> -->
+                <tr>
+                    <td>开始申请时间：</td>
+                    <td><input type="text" v-model="time" name="" id="" cols="30" rows="4"/></td>
+                </tr>
+                <tr>
+                    <td>申请表单地址：</td>
+                    <td><input type="text" v-model="sqdz" name="" id="" cols="30" rows="4"/></td>
+                </tr>
+                <tr>
+                    <td>产品详情链接：</td>
+                    <td><input type="text" v-model="link" name="" id="" cols="30" rows="4"/></td>
+                </tr>
+                <tr>
+                    <td>话题：</td>
+                    <td><input type="text" v-model="huati" name="" id="" cols="30" rows="4"/></td>
+                </tr>
+            </table>
+        </div>
+    
+    </div>
+    
+    <div class="right">
+    
+    	<div class="top">
+            <div class="rightContent" style="font-size:16px;color:DimGray;line-height:26px;">
+
+                    <div class="content">
+                        <h1 style="text-align: center;">
+                            {banner图片}
+                        </h1>
+                        <h1 style="text-align: center;">【重要说明】</h1>
+                        <p>金测评希望你客观、专业、场景化的真实体验分享，而且众测报告必须是100%原创，抄袭将永久拉入黑名单。</p>
+                        <p>本次为大家带来“{{mingcheng}}”的试用，一起来看看吧。</p>
+                        <h1 style="text-align: center;">【产品介绍】</h1>
+                        <h1 style="text-align: center;">
+                            {图文区域}
+                        </h1>
+                        <h1 style="text-align: center;">【活动时间】</h1>
+                        <p>1、报名时间：{{time}}——{{getData(5)}}(截至{{getDay(5)}}日24点)，严禁重复申请。</p>
+                        <p>2、名单公布：申请结束后公布</p>
+                        <p>3、发货日期：众测人员押金(市场价:{{jiazhi}})缴纳完成后，统一发货</p>
+                        <p>4、试用期限：收到产品后10天内</p>
+                        <p>5、试用数量：</p>
+                        <pre>{{mingcheng}} {{zonggong}}台</pre>
+                        <pre>◆相关产品链接：<a :href="link" target="_blank" rel="noopener">{{mingcheng}}</a></pre>
+                        <h1>◆ 点击下面图片按钮进入申请页面</h1>
+                        <p style="text-align: center;"><a :href="sqdz" target="_blank" rel="noopener"><img class="aligncenter wp-image-22793 size-full" src="http://www.jinceping.com/wp-content/uploads/2019/02/2019-02-1916.png" alt="" width="350" height="105"></a></p>
+                        <h1 style="text-align: left;">【一、众测申请】</h1>
+                        <p>1、点击本页面“试用申请”填写完整信息及申请理由，有创意性的测评内容和形式会加分。</p>
+                        <p>2、需要加入金测评试玩交流Q群：656215092，关注官方微博：金测评，关注官方微信公众号：jceping。如获得众测资格后未加入试用群并关注微博和微信公众号，金测评有权取消试用资格，并将资格释放给其他用户。</p>
+                        <p>3、关注官方微博：金测评，并且关注微信公众号：jceping，获得试用资格后需要分享截图。</p>
+                        <h1 style="text-align: left;">【二、名单公布】</h1>
+                        <p>试用名单将在审核后在本页面公布。</p>
+                        <h1 style="text-align: left;">【三、试用通知】</h1>
+                        <p>筛选名单后会在金测评官方QQ群公布，用户需要在24小时内接受管理员的QQ好友申请，并确认参加，逾期资格释放!</p>
+                        <h1 style="text-align: left;">【四、收取押金】</h1>
+                        <p>为了保证体验报告按时保质的完成，金测评将收取与产品等值的押金，建议使用支付宝支付。</p>
+                        <h1 style="text-align: left;">【五、众测产品寄送】</h1>
+                        <p>押金缴纳完毕后，统一安排快递邮寄，届时会通知大家单号。</p>
+                        <h1 style="text-align: left;">【六、收货晒图】</h1>
+                        <p>如收到产品有任何问题，请及时在QQ群联系管理员，金测评会进行妥善处理。</p>
+                        <p>1、新浪微博：收到货后，请以#金测评体验# #{{huati}}#两个话题，发布最少一条9张图的图文分享并@金测评 (必须是9张图)，并且附上本产品申请页面链接;</p>
+                        <p>2、今日头条：收到货后，请以#金测评体验# #{{huati}}#两个话题，发布最少一条带图微头条并@金测评，并且附上本产品申请页面链接;</p>
+                        <p>3、微信朋友圈：收到货后，请以#金测评体验#&nbsp;#{{huati}}#两个话题，发布最少一条9张图的图文分享并(必须是9张图)，并且附上本产品申请页面链接;</p>
+                        <p>4、报告审核通过后，同样需要微博、微信分享报告里链接，规则同上，并截图发送给管理员。</p>
+                        <p>5、以上分享需要截图并放入到汇总表，在试用汇总时，将汇总表格发送给管理员。</p>
+                        <h1 style="text-align: left;">【七、试用报告】</h1>
+                        <p>1、收到货后10天内完成报告，并且首发到金测评网站，标题格式：【金测评】+标题，报告中需带有金测评相关的字样，否则将丧失评优资格。</p>
+                        <p>2、报告在金测评网站首发48小时后，分享到其他最少10个平台，包括自媒体、论坛等，报告中应带有“感谢金测评给予的体验机会”等字样，最好带有金测评网站链接，带有链接会对后续众测申请有加成作用;</p>
+                        <h1 style="text-align: left;">【八、报告要求】</h1>
+                        <p>1、报告必须100%原创，否则拉黑处理，并通报各大试用平台。</p>
+                        <p>2、体验报告应该主次分明、图片精美，图片尺寸宽度为700px，高度不限;内容需客观不可过度夸张与抹黑。</p>
+                        <p>3、金测评所有试用报告产出所有权均归金测评所有，金测评有权对文章做任何处理，试用者接受试用即表明同意本条内容。</p>
+                        <h1 style="text-align: left;">【九、产品赠送】</h1>
+                        <p>1、我们会根据报告质量、转发、微信微博关注情况，选择优秀者赠送产品。</p>
+                        <p>2、试用报告更多的推广渠道与曝光，更加精美的图文和视频，可增加赠送的几率，我们会酌情对赠送数量进行增减。</p>
+                        <p>3、众测产品不得以任何形式转卖。</p>
+                        <h1 style="text-align: left;">【十、押金退回】</h1>
+                        <p>1、众测报告、转发符合要求，活动结束后统一原路返还，人为损坏产品需要进行赔偿(根据市场价)，请及时与管理沟通。</p>
+                        <p>2、如有特殊原因不能按期提交众测报告，请提前与管理员金测评沟通；非特殊原因不得逾期提交报告；</p>
+                        <p>3、报告不符合要求者，经沟通修改后符合要求不扣除押金；若经过修改仍不符合要求，金测评有权扣除押金；</p>
+                        <p>4、未提前和管理员金测评沟通，逾期不提交众测报告者，金测评有权不退回押金。</p>
+                        <h1 style="text-align: left;">【十一、注意事项】</h1>
+                        <p>1、请认真填写申请理由与使用计划，筛选名单的重要依据;</p>
+                        <p>2、逾期未提交众测报告，如无特殊原因，金测评有权做不退押金处理，严禁拖稿;</p>
+                        <p>3、用户应保证众测报告的100%原创等，由报告产生的各种纠纷，众测用户承担全部责任，与本平台无关;</p>
+                        <p>4、举报抄袭邮箱2719026061@qq.com或Q群656215092，举报情况属实，举报人将会提高申请众测机会成功的概率。</p>
+                        <p>5、接受众测产品即代表同意以上所有条款，以上内容最终解释权归金测评所有。</p>
+                    </div>
+            </div>
+        </div>
+        <div class="bottom">
+	        <div class="rightContent">
+                <div style="width:100%;" contenteditable="true">
+                        <h1 style="text-align: center;">
+                            {banner图片}
+                        </h1>
+                        <h1 style="text-align: center;">【重要说明】</h1>
+                        <p>金测评希望你客观、专业、场景化的真实体验分享，而且众测报告必须是100%原创，抄袭将永久拉入黑名单。</p>
+                        <p>本次为大家带来“{{mingcheng}}”的试用，一起来看看吧。</p>
+                        <h1 style="text-align: center;">【产品介绍】</h1>
+                        <h1 style="text-align: center;">
+                            {图文区域}
+                        </h1>
+                        <h1 style="text-align: center;">【活动时间】</h1>
+                        <p>1、报名时间：{{time}}——{{getData(5)}}(截至{{getDay(5)}}日24点)，严禁重复申请。</p>
+                        <p>2、名单公布：申请结束后公布</p>
+                        <p>3、发货日期：众测人员押金(市场价:{{jiazhi}})缴纳完成后，统一发货</p>
+                        <p>4、试用期限：收到产品后10天内</p>
+                        <p>5、试用数量：</p>
+                        <pre>{{mingcheng}} {{zonggong}}台</pre>
+                        <pre>◆相关产品链接：<a :href="link" target="_blank" rel="noopener">{{mingcheng}}</a></pre>
+                        <h1>◆ 点击下面图片按钮进入申请页面</h1>
+                        <p style="text-align: center;"><a :href="sqdz" target="_blank" rel="noopener"><img class="aligncenter wp-image-22793 size-full" src="http://www.jinceping.com/wp-content/uploads/2019/02/2019-02-1916.png" alt="" width="350" height="105"></a></p>
+                        <h1 style="text-align: left;">【一、众测申请】</h1>
+                        <p>1、点击本页面“试用申请”填写完整信息及申请理由，有创意性的测评内容和形式会加分。</p>
+                        <p>2、需要加入金测评试玩交流Q群：656215092，关注官方微博：金测评，关注官方微信公众号：jceping。如获得众测资格后未加入试用群并关注微博和微信公众号，金测评有权取消试用资格，并将资格释放给其他用户。</p>
+                        <p>3、关注官方微博：金测评，并且关注微信公众号：jceping，获得试用资格后需要分享截图。</p>
+                        <h1 style="text-align: left;">【二、名单公布】</h1>
+                        <p>试用名单将在审核后在本页面公布。</p>
+                        <h1 style="text-align: left;">【三、试用通知】</h1>
+                        <p>筛选名单后会在金测评官方QQ群公布，用户需要在24小时内接受管理员的QQ好友申请，并确认参加，逾期资格释放!</p>
+                        <h1 style="text-align: left;">【四、收取押金】</h1>
+                        <p>为了保证体验报告按时保质的完成，金测评将收取与产品等值的押金，建议使用支付宝支付。</p>
+                        <h1 style="text-align: left;">【五、众测产品寄送】</h1>
+                        <p>押金缴纳完毕后，统一安排快递邮寄，届时会通知大家单号。</p>
+                        <h1 style="text-align: left;">【六、收货晒图】</h1>
+                        <p>如收到产品有任何问题，请及时在QQ群联系管理员，金测评会进行妥善处理。</p>
+                        <p>1、新浪微博：收到货后，请以#金测评体验# #{{huati}}#两个话题，发布最少一条9张图的图文分享并@金测评 (必须是9张图)，并且附上本产品申请页面链接;</p>
+                        <p>2、今日头条：收到货后，请以#金测评体验# #{{huati}}#两个话题，发布最少一条带图微头条并@金测评，并且附上本产品申请页面链接;</p>
+                        <p>3、微信朋友圈：收到货后，请以#金测评体验#&nbsp;#{{huati}}#两个话题，发布最少一条9张图的图文分享并(必须是9张图)，并且附上本产品申请页面链接;</p>
+                        <p>4、报告审核通过后，同样需要微博、微信分享报告里链接，规则同上，并截图发送给管理员。</p>
+                        <p>5、以上分享需要截图并放入到汇总表，在试用汇总时，将汇总表格发送给管理员。</p>
+                        <h1 style="text-align: left;">【七、试用报告】</h1>
+                        <p>1、收到货后10天内完成报告，并且首发到金测评网站，标题格式：【金测评】+标题，报告中需带有金测评相关的字样，否则将丧失评优资格。</p>
+                        <p>2、报告在金测评网站首发48小时后，分享到其他最少10个平台，包括自媒体、论坛等，报告中应带有“感谢金测评给予的体验机会”等字样，最好带有金测评网站链接，带有链接会对后续众测申请有加成作用;</p>
+                        <h1 style="text-align: left;">【八、报告要求】</h1>
+                        <p>1、报告必须100%原创，否则拉黑处理，并通报各大试用平台。</p>
+                        <p>2、体验报告应该主次分明、图片精美，图片尺寸宽度为700px，高度不限;内容需客观不可过度夸张与抹黑。</p>
+                        <p>3、金测评所有试用报告产出所有权均归金测评所有，金测评有权对文章做任何处理，试用者接受试用即表明同意本条内容。</p>
+                        <h1 style="text-align: left;">【九、产品赠送】</h1>
+                        <p>1、我们会根据报告质量、转发、微信微博关注情况，选择优秀者赠送产品。</p>
+                        <p>2、试用报告更多的推广渠道与曝光，更加精美的图文和视频，可增加赠送的几率，我们会酌情对赠送数量进行增减。</p>
+                        <p>3、众测产品不得以任何形式转卖。</p>
+                        <h1 style="text-align: left;">【十、押金退回】</h1>
+                        <p>1、众测报告、转发符合要求，活动结束后统一原路返还，人为损坏产品需要进行赔偿(根据市场价)，请及时与管理沟通。</p>
+                        <p>2、如有特殊原因不能按期提交众测报告，请提前与管理员金测评沟通；非特殊原因不得逾期提交报告；</p>
+                        <p>3、报告不符合要求者，经沟通修改后符合要求不扣除押金；若经过修改仍不符合要求，金测评有权扣除押金；</p>
+                        <p>4、未提前和管理员金测评沟通，逾期不提交众测报告者，金测评有权不退回押金。</p>
+                        <h1 style="text-align: left;">【十一、注意事项】</h1>
+                        <p>1、请认真填写申请理由与使用计划，筛选名单的重要依据;</p>
+                        <p>2、逾期未提交众测报告，如无特殊原因，金测评有权做不退押金处理，严禁拖稿;</p>
+                        <p>3、用户应保证众测报告的100%原创等，由报告产生的各种纠纷，众测用户承担全部责任，与本平台无关;</p>
+                        <p>4、举报抄袭邮箱2719026061@qq.com或Q群656215092，举报情况属实，举报人将会提高申请众测机会成功的概率。</p>
+                        <p>5、接受众测产品即代表同意以上所有条款，以上内容最终解释权归金测评所有。</p>
+                </div>
+	        </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+	var app = new Vue({
+	  el: '#app',
+	  data: {
+		mingcheng:"云米互联网净水器Quick5",
+		jieshao:"沃丁声波电动牙刷，只有230g轻重量，简约方便，易携带，易收纳；有效承托腰部，缓解压力；100%棉材质，亲肤透气；进口EPS微颗粒，随意挤压，环保无危害；可拆卸独立内胆，清洗更方便",
+        jiazhi:"4000",
+        huati:"云米互联网净水器Quick5",
+        zonggong:5,
+        qianglou:2,
+        link:"https://item.jd.com/100011553622.html",//产品链接
+        time:"2020-05-12",
+        num:20,
+        sqdz:"http://jinceping.mikecrm.com/M00PFPw"//报名链接
+	  },
+      mounted: function () {
+        //this.setTuijian();
+      },
+	  methods:{
+          setTuijian:function(){
+            var self = this;
+            var tuijian = this.tuijian.split("\n");
+            
+            var cachArray = [];
+            _.each(tuijian,function(item,index){
+                if(item != "" && item != "(出处: vivo智能手机V粉社区)"){
+                    cachArray.push(item);
+                }
+            })
+
+            self.tuijianArray = [];
+            _.each(cachArray,function(item,index){
+                if(index %2 == 0){
+                    self.tuijianArray.push({
+                        text: item,
+                        link: cachArray[index + 1] || ""
+                    })
+                }
+            })
+          },
+          getDay:function(day){
+            if(!this.time){
+                return "";
+            }
+            var date = new Date(this.time);
+            var newDate = new Date(date.setDate(date.getDate() + day));
+            var year = newDate.getFullYear();
+            var month = newDate.getMonth()+1;
+            if(month <10){
+                month = "0" + month;
+            }
+            var day =  newDate.getDate();
+            if(day <10){
+                day = "0" + day;
+            }
+            
+            return day;
+          },
+		  getData:function(day){
+            if(!this.time){
+                return "";
+            }
+            var date = new Date(this.time);
+            var newDate = new Date(date.setDate(date.getDate() + day));
+            var year = newDate.getFullYear();
+            var month = newDate.getMonth()+1;
+            if(month <10){
+                month = "0" + month;
+            }
+            var day =  newDate.getDate();
+            if(day <10){
+                day = "0" + day;
+            }
+            
+            return year + "-" + month + "-" + day;
+          }
+	  }
+	})
+</script>
+
+</body>
+</html>

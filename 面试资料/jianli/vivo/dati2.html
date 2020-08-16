@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" id="WebViewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+		<title>milk.html</title>
+		<style>
+			*{margin: 0;padding:0 }
+			body,html{height: 100%;width: 100%;}
+			iframe{position: relative;z-index: 2;}
+			#time{position: absolute;z-index: 3;left: 0;bottom: 0;background: #fff;opacity: 0.8;padding: 5px;font-size: 12px;}
+		</style>
+	</head>
+	<body>
+		<div id="time"></div>
+		<iframe id="frame" src="https://topic.vivo.com.cn/qgamecenter/TPt1zy27bd72o/index.html" width="100%" height="100%" frameborder="0"></iframe>
+		<script type="text/javascript">
+			var _time = 500;
+			var _M = "";
+			setInterval(function(){
+				var date = new Date();
+				var H = date.getHours();
+				var M = date.getMinutes();
+				var S = date.getSeconds()
+				var time = document.getElementById("time");
+				var text = H + "：" + M  + "：" + S;
+				time.innerText = text;
+				if(S == 59){
+					if(_M === M){
+						return;
+					}
+					console.log(1)
+					//location.reload();
+					var iframe = document.getElementById("frame");
+					iframe.src = "https://topic.vivo.com.cn/qgamecenter/TPt1zy27bd72o/index.html";
+					_M = M;
+				}
+			},100);
+		</script>
+	</body>
+</html>

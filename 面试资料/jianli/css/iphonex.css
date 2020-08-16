@@ -1,0 +1,37 @@
+/**iphoneX 适配安全区**/
+html:after {
+                content: '';
+                z-index: 9998;
+                position: fixed;
+                left: 0;
+                bottom: -50px;
+                width: 100%;
+                height: 50px;
+                background: green;
+            }
+@supports (bottom: constant(safe-area-inset-bottom)) or (bottom: env(safe-area-inset-bottom)) {
+    html{height: 100%;}
+    body{min-height: 100%;height: auto !important;}
+    /*body加边距 .from-dingtalk*/
+
+    /*按钮区加边距*/
+    .container-edit-row .content-top,/*循环域编辑页面列表*/
+    .bottom-buttons,/*循环域编辑页面按钮*/
+    #approve-bottombar,/*审批页面按钮*/
+    .public-popup .dialog-btnbottom,/*审批页面更多弹出按钮*/
+    .bottom-btn,/*审批确认页面按钮*/
+    .chosen-main, .search-main,/*选人页面列表*/
+    .bottom-menu{
+        background: #fff;
+        padding-bottom: constant(safe-area-inset-bottom) !important;
+        padding-bottom: env(safe-area-inset-bottom) !important;
+    }/*列表按钮*/
+    .chosen-bottombar{
+        bottom: constant(safe-area-inset-bottom) !important;
+        bottom: env(safe-area-inset-bottom) !important;
+    }/*选人页面底部区域*/
+    .public-popup .dialog-btnbottom{background-color: transparent; }/*审批页面更多弹出按钮*/
+    .switchSinglePage.panel .scroll{
+        background: #fff;
+    }
+}

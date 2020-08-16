@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>推荐生成器</title>
+
+<script src="js/vue.min.js"></script>
+<script src="js/base.js"></script>
+<link rel="stylesheet" type="text/css" href="css/reset.css">
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?d2b06d61bdb4bafd4a2338c50dc566a4";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+</head>
+
+<style>
+
+*{font-family:"Microsoft YaHei", "SimSun";color:#282828;}
+b{font-weight: bold;}
+#app,html,body{height:100%;overflow:hidden;}
+body{font-size:14px;line-height:18px;background:rgb(44, 52, 55);}
+.left{background:#fff;position:absolute;left:0;right:758px;bottom:0;top:0;overflow:auto;}
+.right{float:right;width:748px;height:100%;overflow:hidden;font-size:12px;line-height:18px;position:relative;}
+pre {white-space: pre-wrap;word-wrap: break-word;}
+.title{font-size: 18px;color: #344665;height: 21px;line-height: 21px;margin-bottom: 6px;text-align:center;}
+table td{vertical-align:top;padding:2px;line-height:30px;}
+input[type='text']{height: 30px;}
+input[type='text'],textarea{border: 1px solid #D2D5DB;border-radius: 2px;padding:5px;}
+input[type='text']:focus,textarea:focus{border-color: #96c4ff !important;box-shadow: 0 0 4px rgba(150,196,255,0.8);outline:none;}
+input[type='text'],textarea{width:100%;box-sizing:border-box;}
+label{cursor:pointer;}
+input[type='checkbox']{margin:0;}
+.cell-group{background:#fff;border-radius: 10px;margin:20px;margin-bottom: 10px;}
+.btn{background: #00A7F6;color:#fff;border: 0;border-radius: 37px;font-size: 14px;height:30px;line-height:30px;cursor:pointer;outline:none;box-sizing:border-box;padding:0 20px;}
+.btn:hover{opacity: 0.9;}
+hr.l{height: 1px;    border: none;    background: #CDCDCD;    color: #CDCDCD;margin:0 10px;}
+.edit a{color:#369;}
+::-webkit-scrollbar {width:5px;height:5px;background-color: #F5F5F5}
+::-webkit-scrollbar-track {background-color: #F5F5F5;}
+::-webkit-scrollbar-thumb {background-color: #c3c2c2;border-radius: 5px;  }
+::-webkit-scrollbar-thumb:hover {background-color: #999;}
+.right .top{position:absolute;top:0;bottom:200px;right:0;left:0;background:#fff;border-radius:0 0 0 4px;padding:20px 0;}
+.right .rightContent{overflow:auto;height:100%;margin:0 20px;}
+.right .bottom{position:absolute;height:150px;width:100%;overflow:auto;left:0;bottom:0;background:#fff;border-radius:4px 0 0 0;padding:20px 0;}
+.cell-js{border:1px solid #d8d8d8;padding:10px;background:#fcfcfc;}
+.cell-pt{border:1px solid #d8d8d8;padding:10px;border-radius:8px;margin-bottom: 10px;}
+</style>
+
+<body>
+
+<div id="app">
+	<div class="left">
+        <div class="cell-group">
+            <table width="100%">
+                <colgroup>
+                    <col width="100">
+                </colgroup>
+                <tr>
+                    <td>推荐：</td>
+                    <td><textarea v-model="tuijian" name="" id="" cols="30" rows="8" v-on:input="setTuijian()"></textarea></td>
+                </tr>
+            </table>
+        </div>
+    
+    </div>
+    
+    <div class="right">
+    
+    	<div class="top">
+            <div class="rightContent" style="font-size:16px;color:DimGray;line-height:26px;">
+                    <div><b>...相关精彩推荐...</b></div>
+                    <div v-for="(item, index) in tuijianArray">{{index+1}}.<a :href="item.link" target="_blank">{{item.text}}</a></div>
+            </div>
+        </div>
+        <div class="bottom">
+	        <div class="rightContent">
+                <div style="width:100%;" contenteditable="true">
+                    <div>[size=4]</div>
+                    <div>[b]...相关精彩推荐...[/b]</div>
+                    <div v-for="(item, index) in tuijianArray">{{index+1}}.[url={{item.link}}]{{item.text}}[/url]</div>
+                    <div>[/size]</div>
+                </div>
+	        </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+	var app = new Vue({
+	  el: '#app',
+	  data: {
+		mingcheng:"乐心体脂秤S11",
+		jieshao:"沃丁声波电动牙刷，只有230g轻重量，简约方便，易携带，易收纳；有效承托腰部，缓解压力；100%棉材质，亲肤透气；进口EPS微颗粒，随意挤压，环保无危害；可拆卸独立内胆，清洗更方便",
+        jiazhi:"199",
+        link:"https://shop.vivo.com.cn/product/10608",
+        time:"2019-07-18",
+        num:20,
+        sqdz:"http://zenglvxin.mikecrm.com/3Bp4XWM",
+        jp1:"Martube 三合一手机镜头 x1",
+        jp2:"Kappa 保温杯 X1",
+        jp3:"HYUNDA 无线蓝牙音箱i80 x1",
+        jp4:"2019金豆 x1",
+        tuijian:"V众测18期丨199元沃丁声波电动牙刷，0元试用1\nhttps://bbs.vivo.com.cn/forum.php?mod=viewthread&tid=5489204\nV众测18期丨199元沃丁声波电动牙刷，0元试用2\nhttps://bbs.vivo.com.cn/forum.php?mod=viewthread&tid=5489204\nV众测18期丨199元沃丁声波电动牙刷，0元试用3\nhttps://bbs.vivo.com.cn/forum.php?mod=viewthread&tid=5489204",
+        tuijianArray:[]
+	  },
+      mounted: function () {
+        this.setTuijian();
+      },
+	  methods:{
+          setTuijian:function(){
+            var self = this;
+            var tuijian = this.tuijian.split("\n");
+            
+            var cachArray = [];
+            _.each(tuijian,function(item,index){
+                if(item != "" && item != "(出处: vivo智能手机V粉社区)"){
+                    cachArray.push(item);
+                }
+            })
+
+            self.tuijianArray = [];
+            _.each(cachArray,function(item,index){
+                if(index %2 == 0){
+                    self.tuijianArray.push({
+                        text: item,
+                        link: cachArray[index + 1] || ""
+                    })
+                }
+            })
+          },
+		  getData:function(day){
+            if(!this.time){
+                return "";
+            }
+            var date = new Date(this.time);
+            var newDate = new Date(date.setDate(date.getDate() + day));
+            var year = newDate.getFullYear();
+            var month = newDate.getMonth()+1;
+            if(month <10){
+                month = "0" + month;
+            }
+            var day =  newDate.getDate();
+            if(day <10){
+                day = "0" + day;
+            }
+            
+            return year + "-" + month + "-" + day;
+          }
+	  }
+	})
+</script>
+
+</body>
+</html>
