@@ -5,6 +5,8 @@ systemctl poweroff #关机
 systemctl reboot  #重启
 ip addr show #查看ip
 systemctl stop firewalld.service && systemctl disable firewalld.service #防火墙
+netstat -lnp | grep 8080 # 查看端口
+kill 端口号 # 结束端口
 ```
 
 平时一定要多使用这些基础的命令！
