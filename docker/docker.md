@@ -2092,3 +2092,38 @@ apt-get update
 apt-get install -y vim
 ```
 
+# docker-compose
+
+## 下载
+
+<img src="https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200914145252017.png" alt="image-20200914145252017" style="zoom:50%;" />
+
+```shell
+# 查看文件所在路径
+[root@centos8 compose]# ls
+docker-compose-Linux-x86_64
+[root@centos8 compose]# pwd 
+/usr/local/docker/compose
+# 移动文件到bin目录
+mv /usr/local/docker/compose/docker-compose-Linux-x86_64 /usr/local/bin/docker-compose
+# 执行权限
+sudo chmod +x /usr/local/bin/docker-compose
+# 验证安装
+[root@centos8 compose]# docker-compose version
+docker-compose version 1.27.2, build 18f557f9
+docker-py version: 4.3.1
+CPython version: 3.7.7
+OpenSSL version: OpenSSL 1.1.0l  10 Sep 2019
+```
+
+# DockerHub私有仓库
+
+```shell
+# 拉取镜像
+docker pull registry:2.7.1
+# 启动镜像
+docker run -d -p 5000:5000 --name cxyRegistry -v /usr/local/docker/compose/registry:/var/lib/registry 镜像id
+# 访问
+http://ip:5000/v2/
+```
+
