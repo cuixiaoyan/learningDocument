@@ -700,7 +700,7 @@ class DeadThread {
 
 JVM支持两种类型的类加载器 。分别为引导类加载器（Bootstrap ClassLoader）和自定义类加载器（User-Defined ClassLoader）。
 
-从概念上来讲，自定义类加载器一般指的是程序中由开发人员自定义的一类类加载器，但是Java虚拟机规范却没有这么定义，而是将所有派生于抽象类ClassLoader的类加载器都划分为自定义类加载器。
+从概念上来讲，自定义类加载器一般指的是程序中由开发人员自定义的一类，类加载器，但是Java虚拟机规范却没有这么定义，而是将所有派生于抽象类ClassLoader的类加载器都划分为自定义类加载器。
 
 无论类加载器的类型如何划分，在程序中我们最常见的类加载器始终只有3个，如下所示：
 
@@ -751,8 +751,8 @@ null
 #### 启动类加载器（引导类加载器，Bootstrap ClassLoader）
 
 - 这个类加载使用C/C++语言实现的，嵌套在JVM内部。
-- 它用来加载Java的核心库（JAVAHOME/jre/1ib/rt.jar、resources.jar或sun.boot.class.path路径下的内容），用于提供JVM自身需要的类
-- 并不继承自ava.lang.ClassLoader，没有父加载器。
+- 它用来加载Java的核心库（JAVAHOME/jre/lib/rt.jar、resources.jar或sun.boot.class.path路径下的内容），用于提供JVM自身需要的类
+- 并不继承自java.lang.ClassLoader，没有父加载器。
 - 加载扩展类和应用程序类加载器，并指定为他们的父类加载器。
 - 出于安全考虑，Bootstrap启动类加载器只加载包名为java、javax、sun等开头的类
 
@@ -761,7 +761,7 @@ null
 - Java语言编写，由sun.misc.Launcher$ExtClassLoader实现。
 - 派生于ClassLoader类
 - 父类加载器为启动类加载器
-- 从java.ext.dirs系统属性所指定的目录中加载类库，或从JDK的安装目录的jre/1ib/ext子目录（扩展目录）下加载类库。如果用户创建的JAR放在此目录下，也会自动由扩展类加载器加载。
+- 从java.ext.dirs系统属性所指定的目录中加载类库，或从JDK的安装目录的jre/lib/ext子目录（扩展目录）下加载类库。如果用户创建的JAR放在此目录下，也会自动由扩展类加载器加载。
 
 ### 应用程序类加载器（系统类加载器，AppClassLoader）
 
@@ -783,8 +783,8 @@ null
 
 用户自定义类加载器实现步骤：
 
-- 开发人员可以通过继承抽象类ava.1ang.ClassLoader类的方式，实现自己的类加载器，以满足一些特殊的需求
-- 在JDK1.2之前，在自定义类加载器时，总会去继承ClassLoader类并重写1oadClass（）方法，从而实现自定义的类加载类，但是在JDK1.2之后已不再建议用户去覆盖1oadclass（）方法，而是建议把自定义的类加载逻辑写在findclass（）方法中
+- 开发人员可以通过继承抽象类java.lang.ClassLoader类的方式，实现自己的类加载器，以满足一些特殊的需求
+- 在JDK1.2之前，在自定义类加载器时，总会去继承ClassLoader类并重写loadClass（）方法，从而实现自定义的类加载类，但是在JDK1.2之后已不再建议用户去覆盖loadclass（）方法，而是建议把自定义的类加载逻辑写在findclass（）方法中
 - 在编写自定义类加载器时，如果没有太过于复杂的需求，可以直接继承URIClassLoader类，这样就可以避免自己去编写findclass（）方法及其获取字节码流的方式，使自定义类加载器编写更加简洁。
 
 ### 查看根加载器所能加载的目录
