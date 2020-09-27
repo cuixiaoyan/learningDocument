@@ -1825,7 +1825,7 @@ idea配置启动参数：
 
 我们简单的写一个OOM例子
 
-```
+```java
 /**
  * OOM测试
  */
@@ -2199,14 +2199,14 @@ TLAB：Thread Local Allocation Buffer，也就是为每个线程单独分配了�
   - 打印gc简要信息：①-Xx：+PrintGC ② - verbose:gc
 - -XX:HandlePromotionFalilure：是否设置空间分配担保
 
-在发生Minor GC之前，虚拟机会检查老年代最大可用的连续空间是否大于新生代所有对象的总空间。I
+在发生Minor GC之前，虚拟机会检查老年代最大可用的连续空间是否大于新生代所有对象的总空间。
 
 - 如果大于，则此次Minor GC是安全的
 - 如果小于，则虚拟机会查看-xx:HandlePromotionFailure设置值是否允担保失败。
   - 如果HandlePromotionFailure=true，那么会继续检查老年代最大可用连续空间是否大于历次晋升到老年代的对象的平均大小。
   - 如果大于，则尝试进行一次Minor GC，但这次Minor GC依然是有风险的；
   - 如果小于，则改为进行一次FullGC。
-  - 如果HandlePromotionFailure=false，则改为进行一次Ful1 Gc。
+  - 如果HandlePromotionFailure=false，则改为进行一次Full Gc。
 
 在JDK6 Update24之后，HandlePromotionFailure参数不会再影响到虚拟机的空间分配担保策略，观察openJDK中的源码变化，虽然源码中还定义了HandlePromotionFailure参数，但是在代码中已经不会再使用它。JDK6 Update 24之后的规则变为只要老年代的连续空间大于新生代对象总大小或者历次晋升的平均大小就会进行Minor GC，否则将进行FullGC。
 
@@ -2233,7 +2233,7 @@ TLAB：Thread Local Allocation Buffer，也就是为每个线程单独分配了�
 
 没有发生逃逸的对象，则可以分配到栈上，随着方法执行的结束，栈空间就被移除，每个栈里面包含了很多栈帧，也就是发生逃逸分析
 
-```
+```java
 public void my_method() {
     V v = new V();
     // use v
@@ -2244,7 +2244,7 @@ public void my_method() {
 
 针对下面的代码
 
-```
+```java
 public static StringBuffer createStringBuffer(String s1, String s2) {
     StringBuffer sb = new StringBuffer();
     sb.append(s1);
@@ -2255,7 +2255,7 @@ public static StringBuffer createStringBuffer(String s1, String s2) {
 
 如果想要StringBuffer sb不发生逃逸，可以这样写
 
-```
+```java
 public static String createStringBuffer(String s1, String s2) {
     StringBuffer sb = new StringBuffer();
     sb.append(s1);
@@ -2266,12 +2266,10 @@ public static String createStringBuffer(String s1, String s2) {
 
 完整的逃逸分析代码举例
 
-```
+```java
 /**
  * 逃逸分析
  * 如何快速的判断是否发生了逃逸分析，大家就看new的对象是否在方法外被调用。
- * @author: 陌溪
- * @create: 2020-07-07-20:05
  */
 public class EscapeAnalysis {
 
@@ -2324,11 +2322,11 @@ public class EscapeAnalysis {
 
 使用逃逸分析，编译器可以对代码做如下优化：
 
-- 栈上分配：将堆分配转化为栈分配。如果一个对象在子程序中被分配，要使指向该对象的指针永远不会发生逃逸，对象可能是栈上分配的候选，而不是堆上分配
+- 栈上分配：将堆分配转化为栈分配。如果一个对象在子程序中被分配，要使指向该对象的指针永远不会发生逃逸，对象可能是栈上分配的候选，而不是堆上分配。
 - 同步省略：如果一个对象被发现只有一个线程被访问到，那么对于这个对象的操作可以不考虑同步。
 - 分离对象或标量替换：有的对象可能不需要作为一个连续的内存结构存在也可以被访问到，那么对象的部分（或全部）可以不存储在内存，而是存储在CPU寄存器中。
 
-### 栈上分配
+### 栈上分配(默认开启)
 
 JIT编译器在编译期间根据逃逸分析的结果，发现如果一个对象并没有逃逸出方法的话，就可能被优化成栈上分配。分配完成后，继续在调用栈内执行，最后线程结束，栈空间被回收，局部变量对象也被回收。这样就无须进行垃圾回收了。
 
@@ -2340,12 +2338,10 @@ JIT编译器在编译期间根据逃逸分析的结果，发现如果一个对�
 
 我们通过举例来说明 开启逃逸分析 和 未开启逃逸分析时候的情况
 
-```
+```java
 /**
  * 栈上分配
  * -Xmx1G -Xms1G -XX:-DoEscapeAnalysis -XX:+PrintGCDetails
- * @author: 陌溪
- * @create: 2020-07-07-20:23
  */
 class User {
     private String name;
@@ -2412,7 +2408,7 @@ public class StackAllocation {
 
 例如下面的代码
 
-```
+```java
 public void f() {
     Object hellis = new Object();
     synchronized(hellis) {
@@ -2423,7 +2419,7 @@ public void f() {
 
 代码中对hellis这个对象加锁，但是hellis对象的生命周期只在f()方法中，并不会被其他线程所访问到，所以在JIT编译阶段就会被优化掉，优化成：
 
-```
+```java
 public void f() {
     Object hellis = new Object();
 	System.out.println(hellis);
@@ -2440,9 +2436,9 @@ public void f() {
 
 相对的，那些还可以分解的数据叫做聚合量（Aggregate），Java中的对象就是聚合量，因为他可以分解成其他聚合量和标量。
 
-在JIT阶段，如果经过逃逸分析，发现一个对象不会被外界访问的话，那么经过J工T优化，就会把这个对象拆解成若干个其中包含的若干个成员变量来代替。这个过程就是标量替换。
+在JIT阶段，如果经过逃逸分析，发现一个对象不会被外界访问的话，那么经过JlT优化，就会把这个对象拆解成若干个其中包含的若干个成员变量来代替。这个过程就是标量替换。
 
-```
+```java
 public static void main(String args[]) {
     alloc();
 }
@@ -2458,7 +2454,7 @@ private static void alloc() {
 
 以上代码，经过标量替换后，就会变成
 
-```
+```java
 private static void alloc() {
     int x = 1;
     int y = 2;
@@ -2514,7 +2510,7 @@ private static void alloc() {
 
 ![image-20200708094507624](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200708094507624.png)
 
-ThreadLocal：如何保证多个线程在并发环境下的安全性？典型应用就是数据库连接管理，以及会话管理
+ThreadLocal：如何保证多个线程在并发环境下的安全性？典型应用就是数据库连接管理，以及会话管理。
 
 ## 栈、堆、方法区的交互关系
 
@@ -2551,7 +2547,7 @@ ThreadLocal：如何保证多个线程在并发环境下的安全性？典型应
 
 - JDK 1.8后，元空间存放在堆外内存中
 
-本质上，方法区和永久代并不等价。仅是对hotspot而言的。《Java虚拟机规范》对如何实现方法区，不做统一要求。例如：BEAJRockit / IBM J9 中不存在永久代的概念。
+本质上，方法区和永久代并不等价。仅是对hotspot而言的。《Java虚拟机规范》对如何实现方法区，不做统一要求。例如：BEA JRockit / IBM J9 中不存在永久代的概念。
 
 > 现在来看，当年使用永久代，不是好的idea。导致Java程序更容易oom（超过-XX:MaxPermsize上限）
 
@@ -2587,13 +2583,13 @@ ThreadLocal：如何保证多个线程在并发环境下的安全性？典型应
 
 与永久代不同，如果不指定大小，默认情况下，虚拟机会耗尽所有的可用系统内存。如果元数据区发生溢出，虚拟机一样会抛出异常OutOfMemoryError:Metaspace
 
--XX:MetaspaceSize：设置初始的元空间大小。对于一个64位的服务器端JVM来说，其默认的-xx:MetaspaceSize值为21MB。这就是初始的高水位线，一旦触及这个水位线，Ful1GC将会被触发并卸载没用的类（即这些类对应的类加载器不再存活）然后这个高水位线将会重置。新的高水位线的值取决于GC后释放了多少元空间。如果释放的空间不足，那么在不超过MaxMetaspaceSize时，适当提高该值。如果释放空间过多，则适当降低该值。
+-XX:MetaspaceSize：设置初始的元空间大小。对于一个64位的服务器端JVM来说，其默认的-xx:MetaspaceSize值为21MB。这就是初始的高水位线，一旦触及这个水位线，FullGC将会被触发并卸载没用的类（即这些类对应的类加载器不再存活）然后这个高水位线将会重置。新的高水位线的值取决于GC后释放了多少元空间。如果释放的空间不足，那么在不超过MaxMetaspaceSize时，适当提高该值。如果释放空间过多，则适当降低该值。
 
-如果初始化的高水位线设置过低，上述高水位线调整情况会发生很多次。通过垃圾回收器的日志可以观察到Ful1GC多次调用。为了避免频繁地GC，建议将-XX:MetaspaceSize设置为一个相对较高的值。
+如果初始化的高水位线设置过低，上述高水位线调整情况会发生很多次。通过垃圾回收器的日志可以观察到FullGC多次调用。为了避免频繁地GC，建议将-XX:MetaspaceSize设置为一个相对较高的值。
 
 ### 如何解决这些OOM
 
-- 要解决ooM异常或heap space的异常，一般的手段是首先通过内存映像分析工具（如Ec1ipse Memory Analyzer）对dump出来的堆转储快照进行分析，重点是确认内存中的对象是否是必要的，也就是要先分清楚到底是出现了内存泄漏（Memory Leak）还是内存溢出（Memory Overflow）
+- 要解决ooM异常或heap space的异常，一般的手段是首先通过内存映像分析工具（如Eclipse Memory Analyzer）对dump出来的堆转储快照进行分析，重点是确认内存中的对象是否是必要的，也就是要先分清楚到底是出现了内存泄漏（Memory Leak）还是内存溢出（Memory Overflow）
   - 内存泄漏就是 有大量的引用指向某些对象，但是这些对象以后不会使用了，但是因为它们还和GC ROOT有关联，所以导致以后这些对象也不会被回收，这就是内存泄漏的问题
 - 如果是内存泄漏，可进一步通过工具查看泄漏对象到GC Roots的引用链。于是就能找到泄漏对象是通过怎样的路径与GCRoots相关联并导致垃圾收集器无法自动回收它们的。掌握了泄漏对象的类型信息，以及GCRoots引用链的信息，就可以比较准确地定位出泄漏代码的位置。
 - 如果不存在内存泄漏，换句话说就是内存中的对象确实都还必须存活着，那就应当检查虚拟机的堆参数（-Xmx与-Xms），与机器物理内存对比看是否还可以调大，从代码上检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗。
@@ -2640,12 +2636,9 @@ JVM必须保存所有方法的以下信息，同域信息一样包括声明顺�
 
 类变量被类的所有实例共享，即使没有类实例时，你也可以访问它
 
-```
+```java
 /**
  * non-final的类变量
- *
- * @author: 陌溪
- * @create: 2020-07-08-16:54
  */
 public class MethodAreaTest {
     public static void main(String[] args) {
@@ -2679,7 +2672,7 @@ class Order {
 
 - 方法区，内部包含了运行时常量池
 - 字节码文件，内部包含了常量池
-- 要弄清楚方法区，需要理解清楚C1assFile，因为加载类的信息都在方法区。
+- 要弄清楚方法区，需要理解清楚ClassFile，因为加载类的信息都在方法区。
 - 要弄清楚方法区的运行时常量池，需要理解清楚classFile中的常量池。
 
 ### 常量池
@@ -2694,7 +2687,7 @@ class Order {
 
 比如：如下的代码：
 
-```
+```java
 public class SimpleClass {
     public void sayHello() {
         System.out.println("hello");
@@ -2714,7 +2707,7 @@ public class SimpleClass {
 
 例如下面这段代码
 
-```
+```java
 public class MethodAreaTest2 {
     public static void main(String args[]) {
         Object obj = new Object();
@@ -2756,7 +2749,7 @@ JVM为每个已加载的类型（类或接口）都维护一个常量池。池�
 
 如下代码
 
-```
+```java
 public class MethodAreaDemo {
     public static void main(String args[]) {
         int x = 500;
@@ -2804,7 +2797,7 @@ public class MethodAreaDemo {
 
 ## 方法区的演进细节
 
-首先明确：只有Hotspot才有永久代。BEA JRockit、IBMJ9等来说，是不存在永久代的概念的。原则上如何实现方法区属于虚拟机实现细节，不受《Java虚拟机规范》管束，并不要求统一
+首先明确：只有Hotspot才有永久代。BEA JRockit、IBM J9等来说，是不存在永久代的概念的。原则上如何实现方法区属于虚拟机实现细节，不受《Java虚拟机规范》管束，并不要求统一
 
 Hotspot中方法区的变化：
 
@@ -2850,7 +2843,7 @@ JRockit是和HotSpot融合后的结果，因为JRockit没有永久代，所以�
 
 ### StringTable为什么要调整位置
 
-jdk7中将StringTable放到了堆空间中。因为永久代的回收效率很低，在full gc的时候才会触发。而ful1gc是老年代的空间不足、永久代不足时才会触发。
+jdk7中将StringTable放到了堆空间中。因为永久代的回收效率很低，在full gc的时候才会触发。而fullgc是老年代的空间不足、永久代不足时才会触发。
 
 这就导致stringTable回收效率不高。而我们开发中会有大量的字符串被创建，回收效率低，导致永久代内存不足。放到堆里，能及时回收内存。
 
@@ -2858,7 +2851,7 @@ jdk7中将StringTable放到了堆空间中。因为永久代的回收效率很�
 
 静态引用对应的对象实体始终都存在堆空间
 
-可以使用 jhsdb.ext，需要在jdk9的时候才引入的
+可以使用 jhsdb.exe，需要在jdk9的时候才引入的
 
 staticobj随着Test的类型信息存放在方法区，instanceobj随着Test的对象实例存放在Java堆，localobject则是存放在foo（）方法栈帧的局部变量表中。
 
@@ -2893,7 +2886,7 @@ HotSpot虚拟机对常量池的回收策略是很明确的，只要常量池中�
 判定一个常量是否“废弃”还是相对简单，而要判定一个类型是否属于“不再被使用的类”的条件就比较苛刻了。需要同时满足下面三个条件：
 
 - 该类所有的实例都已经被回收，也就是Java堆中不存在该类及其任何派生子类的实例。 加载该类的类加载器已经被回收，这个条件除非是经过精心设计的可替换类加载器的场景，如osGi、JSP的重加载等，否则通常是很难达成的。
-- 该类对应的java.lang.C1ass对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。I Java虚拟机被允许对满足上述三个条件的无用类进行回收，这里说的仅仅是“被允许”，而并不是和对象一样，没有引用了就必然会回收。关于是否要对类型进行回收，HotSpot虚拟机提供了-Xnoclassgc参数进行控制，还可以使用-verbose:class 以及 -XX：+TraceClass-Loading、-XX：+TraceClassUnLoading查看类加载和卸载信息
+- 该类对应的java.lang.Class对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。I Java虚拟机被允许对满足上述三个条件的无用类进行回收，这里说的仅仅是“被允许”，而并不是和对象一样，没有引用了就必然会回收。关于是否要对类型进行回收，HotSpot虚拟机提供了-Xnoclassgc参数进行控制，还可以使用-verbose:class 以及 -XX：+TraceClass-Loading、-XX：+TraceClassUnLoading查看类加载和卸载信息
 - 在大量使用反射、动态代理、CGLib等字节码框架，动态生成JSP以及oSGi这类频繁自定义类加载器的场景中，通常都需要Java虚拟机具备类型卸载的能力，以保证不会对方法区造成过大的内存压力。
 
 ## 总结
