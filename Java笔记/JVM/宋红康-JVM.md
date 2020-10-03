@@ -3721,7 +3721,7 @@ true
 
 intern是一个native方法，调用的是底层C的方法
 
-字符串池最初是空的，由String类私有地维护。在调用intern方法时，如果池中已经包含了由equals(object)方法确定的与该字符串对象相等的字符串，则返回池中的字符串。否则，该字符串对象将被添加到池中，并返回对该字符串对象的引用。
+字符串池最初是空的，由String类私有的维护。在调用intern方法时，如果池中已经包含了由equals(object)方法确定的与该字符串对象相等的字符串，则返回池中的字符串。否则，该字符串对象将被添加到池中，并返回对该字符串对象的引用。
 
 如果不是用双引号声明的string对象，可以使用string提供的intern方法：intern方法会从字符串常量池中查询当前字符串是否存在，若不存在就会将当前字符串放入常量池中。
 
@@ -3743,11 +3743,9 @@ String myInfo = new string("I love atguigu").intern();
 
 我们通过测试一下，使用了intern和不使用的时候，其实相差还挺多的
 
-```
+```java
 /**
  * 使用Intern() 测试执行效率
- * @author: 陌溪
- * @create: 2020-07-11-15:19
  */
 public class StringIntern2 {
     static final int MAX_COUNT = 1000 * 10000;
@@ -3757,6 +3755,7 @@ public class StringIntern2 {
         Integer [] data = new Integer[]{1,2,3,4,5,6,7,8,9,10};
         long start = System.currentTimeMillis();
         for (int i = 0; i < MAX_COUNT; i++) {
+          //arr[i] = new String(String.valueOf(data[i%data.length]));
             arr[i] = new String(String.valueOf(data[i%data.length])).intern();
         }
         long end = System.currentTimeMillis();
@@ -3779,12 +3778,9 @@ public class StringIntern2 {
 
 ### new String("ab")会创建几个对象
 
-```
+```java
 /**
  * new String("ab") 会创建几个对象？ 看字节码就知道是2个对象
- *
- * @author: 陌溪
- * @create: 2020-07-11-11:17
  */
 public class StringNewTest {
     public static void main(String[] args) {
@@ -3795,7 +3791,7 @@ public class StringNewTest {
 
 我们转换成字节码来查看
 
-```
+```java
  0 new #2 <java/lang/String>
  3 dup
  4 ldc #3 <ab>
@@ -3811,12 +3807,9 @@ public class StringNewTest {
 
 ### new String("a") + new String("b") 会创建几个对象
 
-```
+```java
 /**
  * new String("ab") 会创建几个对象？ 看字节码就知道是2个对象
- *
- * @author: 陌溪
- * @create: 2020-07-11-11:17
  */
 public class StringNewTest {
     public static void main(String[] args) {
@@ -3827,7 +3820,7 @@ public class StringNewTest {
 
 字节码文件为
 
-```
+```java
  0 new #2 <java/lang/StringBuilder>
  3 dup
  4 invokespecial #3 <java/lang/StringBuilder.<init>>
@@ -3860,9 +3853,9 @@ public class StringNewTest {
 
 #### JDK6中
 
-```
+```java
 String s = new String("1");  // 在常量池中已经有了
-s.intern(); // 将该对象放入到常量池。但是调用此方法没有太多的区别，因为已经存在了1
+s.intern(); // 将该对象放入到常量池。但是调用此方法没有任何的区别，因为已经存在了 1
 String s2 = "1";
 System.out.println(s == s2); // false
 
@@ -3885,7 +3878,7 @@ true
 
 如果是下面这样的，那么就是true
 
-```
+```java
 String s = new String("1");
 s = s.intern();
 String s2 = "1";
@@ -3902,7 +3895,7 @@ System.out.println(s == s2); // true
 
 #### JDK7中
 
-```
+```java
 String s = new String("1");
 s.intern();
 String s2 = "1";
@@ -3918,7 +3911,7 @@ System.out.println(s3 == s4); // true
 
 ### 扩展
 
-```
+```java
 String s3 = new String("1") + new String("1");
 String s4 = "11";  // 在常量池中生成的字符串
 s3.intern();  // 然后s3就会从常量池中找，发现有了，就什么事情都不做
@@ -3970,12 +3963,10 @@ true
 
 ## StringTable的垃圾回收
 
-```
+```java
 /**
  * String的垃圾回收
  * -Xms15m -Xmx15m -XX:+PrintStringTableStatistics -XX:+PrintGCDetails
- * @author: 陌溪
- * @create: 2020-07-11-16:55
  */
 public class StringGCTest {
     public static void main(String[] args) {
