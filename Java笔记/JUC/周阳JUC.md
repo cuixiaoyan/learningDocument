@@ -684,3 +684,503 @@ public class com.moxi.interview.study.thread.T1 {
 | 0xc7   | ifnonnull       | 不为null时跳转                                               |
 | 0xc8   | goto_w          | 无条件跳转(宽索引)                                           |
 | 0xc9   | jsr_w           | 跳转至指定的32位offset位置, 并将jsr_w的下一条指令地址压入栈顶 |
+
+# Volatile禁止指令重排
+
+计算机在执行程序时，为了提高性能，编译器和处理器常常会对指令重排，一般分为以下三种：
+
+```
+源代码 -> 编译器优化的重排 -> 指令并行的重排 -> 内存系统的重排 -> 最终执行指令
+```
+
+单线程环境里面确保最终执行结果和代码顺序的结果一致
+
+处理器在进行重排序时，必须要考虑指令之间的`数据依赖性`
+
+多线程环境中线程交替执行，由于编译器优化重排的存在，两个线程中使用的变量能否保证一致性是无法确定的，结果无法预测。
+
+## 指令重排 - example 1
+
+```
+public void mySort() {
+	int x = 11;
+	int y = 12;
+	x = x + 5;
+	y = x * x;
+}
+```
+
+按照正常单线程环境，执行顺序是 1 2 3 4
+
+但是在多线程环境下，可能出现以下的顺序：
+
+- 2 1 3 4
+- 1 3 2 4
+
+上述的过程就可以当做是指令的重排，即内部执行顺序，和我们的代码顺序不一样
+
+但是指令重排也是有限制的，即不会出现下面的顺序
+
+- 4 3 2 1
+
+因为处理器在进行重排时候，必须考虑到指令之间的数据依赖性
+
+因为步骤 4：需要依赖于 y的申明，以及x的申明，故因为存在数据依赖，无法首先执行
+
+### 例子
+
+int a,b,x,y = 0
+
+| 线程1        | 线程2  |
+| ------------ | ------ |
+| x = a;       | y = b; |
+| b = 1;       | a = 2; |
+|              |        |
+| x = 0; y = 0 |        |
+
+因为上面的代码，不存在数据的依赖性，因此编译器可能对数据进行重排
+
+| 线程1        | 线程2  |
+| ------------ | ------ |
+| b = 1;       | a = 2; |
+| x = a;       | y = b; |
+|              |        |
+| x = 2; y = 1 |        |
+
+这样造成的结果，和最开始的就不一致了，这就是导致重排后，结果和最开始的不一样，因此为了防止这种结果出现，volatile就规定禁止指令重排，为了保证数据的一致性
+
+## 指令重排 - example 2
+
+比如下面这段代码
+
+```java
+/**
+ * ResortSeqDemo
+ */
+public class ResortSeqDemo {
+    int a= 0;
+    boolean flag = false;
+
+    public void method01() {
+        a = 1;
+        flag = true;
+    }
+
+    public void method02() {
+        if(flag) {
+            a = a + 5;
+            System.out.println("reValue:" + a);
+        }
+    }
+}
+```
+
+我们按照正常的顺序，分别调用method01() 和 method02() 那么，最终输出就是 a = 6
+
+但是如果在多线程环境下，因为方法1 和 方法2，他们之间不能存在数据依赖的问题，因此原先的顺序可能是
+
+```
+a = 1;
+flag = true;
+
+a = a + 5;
+System.out.println("reValue:" + a);
+        
+```
+
+但是在经过编译器，指令，或者内存的重排后，可能会出现这样的情况
+
+```
+flag = true;
+
+a = a + 5;
+System.out.println("reValue:" + a);
+
+a = 1;
+```
+
+也就是先执行 flag = true后，另外一个线程马上调用方法2，满足 flag的判断，最终让a + 5，结果为5，这样同样出现了数据不一致的问题
+
+为什么会出现这个结果：多线程环境中线程交替执行，由于编译器优化重排的存在，两个线程中使用的变量能否保证一致性是无法确定的，结果无法预测。
+
+这样就需要通过volatile来修饰，来保证线程安全性
+
+## Volatile针对指令重排做了啥
+
+Volatile实现禁止指令重排优化，从而避免了多线程环境下程序出现乱序执行的现象
+
+首先了解一个概念，内存屏障（Memory Barrier）又称内存栅栏，是一个CPU指令，它的作用有两个：
+
+- 保证特定操作的顺序
+- 保证某些变量的内存可见性（利用该特性实现volatile的内存可见性）
+
+由于编译器和处理器都能执行指令重排的优化，如果在指令间插入一条Memory Barrier则会告诉编译器和CPU，不管什么指令都不能和这条Memory Barrier指令重排序，也就是说 `通过插入内存屏障禁止在内存屏障前后的指令执行重排序优化`。 内存屏障另外一个作用是刷新出各种CPU的缓存数，因此任何CPU上的线程都能读取到这些数据的最新版本。
+
+![image-20200310162654437](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200310162654437.png)
+
+也就是过在Volatile的写 和 读的时候，加入屏障，防止出现指令重排的
+
+## 线程安全获得保证
+
+工作内存与主内存同步延迟现象导致的可见性问题
+
+- 可通过synchronized或volatile关键字解决，他们都可以使一个线程修改后的变量立即对其它线程可见
+
+对于指令重排导致的可见性问题和有序性问题
+
+- 可以使用volatile关键字解决，因为volatile关键字的另一个作用就是禁止重排序优化
+
+## 总线嗅探
+
+# Volatile的应用
+
+## 单例模式DCL代码
+
+首先回顾一下，单线程下的单例模式代码
+
+```java
+/**
+ * SingletonDemo（单例模式）
+ */
+public class SingletonDemo {
+
+    private static SingletonDemo instance = null;
+
+    private SingletonDemo () {
+        System.out.println(Thread.currentThread().getName() + "\t 我是构造方法SingletonDemo");
+    }
+
+    public static SingletonDemo getInstance() {
+        if(instance == null) {
+            instance = new SingletonDemo();
+        }
+        return instance;
+    }
+
+    public static void main(String[] args) {
+        // 这里的 == 是比较内存地址
+        System.out.println(SingletonDemo.getInstance() == SingletonDemo.getInstance());
+        System.out.println(SingletonDemo.getInstance() == SingletonDemo.getInstance());
+        System.out.println(SingletonDemo.getInstance() == SingletonDemo.getInstance());
+        System.out.println(SingletonDemo.getInstance() == SingletonDemo.getInstance());
+    }
+}
+```
+
+最后输出的结果
+
+![image-20200310164513408](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200310164513408.png)
+
+但是在多线程的环境下，我们的单例模式是否还是同一个对象了
+
+```java
+/**
+ * SingletonDemo（单例模式）
+ */
+public class SingletonDemo {
+
+    private static SingletonDemo instance = null;
+
+    private SingletonDemo () {
+        System.out.println(Thread.currentThread().getName() + "\t 我是构造方法SingletonDemo");
+    }
+
+    public static SingletonDemo getInstance() {
+        if(instance == null) {
+            instance = new SingletonDemo();
+        }
+        return instance;
+    }
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 10; i++) {
+            new Thread(() -> {
+                SingletonDemo.getInstance();
+            }, String.valueOf(i)).start();
+        }
+    }
+}
+```
+
+从下面的结果我们可以看出，我们通过SingletonDemo.getInstance() 获取到的对象，并不是同一个，而是被下面几个线程都进行了创建，那么在多线程环境下，单例模式如何保证呢？
+
+![image-20200310164720940](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200310164720940.png)
+
+### 解决方法1
+
+引入synchronized关键字
+
+```java
+    public synchronized static SingletonDemo getInstance() {
+        if(instance == null) {
+            instance = new SingletonDemo();
+        }
+        return instance;
+    }
+```
+
+输出结果
+
+![image-20200310164946940](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200310164946940.png)
+
+我们能够发现，通过引入Synchronized关键字，能够解决高并发环境下的单例模式问题
+
+但是synchronized属于重量级的同步机制，它只允许一个线程同时访问获取实例的方法，但是为了保证数据一致性，而减低了并发性，因此采用的比较少
+
+### 解决方法2
+
+通过引入DCL Double Check Lock 双端检锁机制
+
+就是在进来和出去的时候，进行检测
+
+```java
+    public static SingletonDemo getInstance() {
+        if(instance == null) {
+            // 同步代码段的时候，进行检测
+            synchronized (SingletonDemo.class) {
+                if(instance == null) {
+                    instance = new SingletonDemo();
+                }
+            }
+        }
+        return instance;
+    }
+```
+
+最后输出的结果为：
+
+![image-20200310165703190](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200310165703190.png)
+
+从输出结果来看，确实能够保证单例模式的正确性，但是上面的方法还是存在问题的
+
+DCL（双端检锁）机制不一定是线程安全的，原因是有指令重排的存在，加入volatile可以禁止指令重排
+
+原因是在某一个线程执行到第一次检测的时候，读取到 instance 不为null，instance的引用对象可能没有完成实例化。因为 instance = new SingletonDemo()；可以分为以下三步进行完成：
+
+- memory = allocate(); // 1、分配对象内存空间
+- instance(memory); // 2、初始化对象
+- instance = memory; // 3、设置instance指向刚刚分配的内存地址，此时instance != null
+
+但是我们通过上面的三个步骤，能够发现，步骤2 和 步骤3之间不存在 数据依赖关系，而且无论重排前 还是重排后，程序的执行结果在单线程中并没有改变，因此这种重排优化是允许的。
+
+- memory = allocate(); // 1、分配对象内存空间
+- instance = memory; // 3、设置instance指向刚刚分配的内存地址，此时instance != null，但是对象还没有初始化完成
+- instance(memory); // 2、初始化对象
+
+这样就会造成什么问题呢？
+
+也就是当我们执行到重排后的步骤2，试图获取instance的时候，会得到null，因为对象的初始化还没有完成，而是在重排后的步骤3才完成，因此执行单例模式的代码时候，就会重新在创建一个instance实例
+
+```
+指令重排只会保证串行语义的执行一致性（单线程），但并不会关系多线程间的语义一致性
+```
+
+所以当一条线程访问instance不为null时，由于instance实例未必已初始化完成，这就造成了线程安全的问题
+
+所以需要引入volatile，来保证出现指令重排的问题，从而保证单例模式的线程安全性
+
+```
+private static volatile SingletonDemo instance = null;
+```
+
+### 最终代码
+
+```java
+/**
+ * SingletonDemo（单例模式）
+ */
+public class SingletonDemo {
+
+    private static volatile SingletonDemo instance = null;
+
+    private SingletonDemo () {
+        System.out.println(Thread.currentThread().getName() + "\t 我是构造方法SingletonDemo");
+    }
+
+    public static SingletonDemo getInstance() {
+        if(instance == null) {
+            // a 双重检查加锁多线程情况下会出现某个线程虽然这里已经为空，但是另外一个线程已经执行到d处
+            synchronized (SingletonDemo.class) //b
+            { 
+           //c不加volitale关键字的话有可能会出现尚未完全初始化就获取到的情况。原因是内存模型允许无序写入
+                if(instance == null) { 
+                	// d 此时才开始初始化
+                    instance = new SingletonDemo();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public static void main(String[] args) {
+//        // 这里的 == 是比较内存地址
+//        System.out.println(SingletonDemo.getInstance() == SingletonDemo.getInstance());
+//        System.out.println(SingletonDemo.getInstance() == SingletonDemo.getInstance());
+//        System.out.println(SingletonDemo.getInstance() == SingletonDemo.getInstance());
+//        System.out.println(SingletonDemo.getInstance() == SingletonDemo.getInstance());
+
+        for (int i = 0; i < 10; i++) {
+            new Thread(() -> {
+                SingletonDemo.getInstance();
+            }, String.valueOf(i)).start();
+        }
+    }
+}
+```
+
+# CAS底层原理
+
+## 概念
+
+CAS的全称是Compare-And-Swap，它是CPU并发原语
+
+它的功能是判断内存某个位置的值是否为预期值，如果是则更改为新的值，这个过程是原子的
+
+CAS并发原语体现在Java语言中就是sun.misc.Unsafe类的各个方法。调用UnSafe类中的CAS方法，JVM会帮我们实现出CAS汇编指令，这是一种完全依赖于硬件的功能，通过它实现了原子操作，再次强调，由于CAS是一种系统原语，原语属于操作系统用于范畴，是由若干条指令组成，用于完成某个功能的一个过程，并且原语的执行必须是连续的，在执行过程中不允许被中断，也就是说CAS是一条CPU的原子指令，不会造成所谓的数据不一致的问题，也就是说CAS是线程安全的。
+
+## 代码使用
+
+首先调用AtomicInteger创建了一个实例， 并初始化为5
+
+```
+        // 创建一个原子类
+        AtomicInteger atomicInteger = new AtomicInteger(5);
+```
+
+然后调用CAS方法，企图更新成2019，这里有两个参数，一个是5，表示期望值，第二个就是我们要更新的值
+
+```
+atomicInteger.compareAndSet(5, 2019)
+```
+
+然后再次使用了一个方法，同样将值改成1024
+
+```
+atomicInteger.compareAndSet(5, 1024)
+```
+
+完整代码如下：
+
+```java
+/**
+ * CASDemo
+ *
+ * 比较并交换：compareAndSet
+ */
+public class CASDemo {
+    public static void main(String[] args) {
+        // 创建一个原子类
+        AtomicInteger atomicInteger = new AtomicInteger(5);
+
+        /**
+         * 一个是期望值，一个是更新值，但期望值和原来的值相同时，才能够更改
+         * 假设三秒前，我拿的是5，也就是expect为5，然后我需要更新成 2019
+         */
+        System.out.println(atomicInteger.compareAndSet(5, 2019) + "\t current data: " + atomicInteger.get());
+
+        System.out.println(atomicInteger.compareAndSet(5, 1024) + "\t current data: " + atomicInteger.get());
+    }
+}
+```
+
+上面代码的执行结果为
+
+![image-20200310201327734](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200310201327734.png)
+
+这是因为我们执行第一个的时候，期望值和原本值是满足的，因此修改成功，但是第二次后，主内存的值已经修改成了2019，不满足期望值，因此返回了false，本次写入失败
+
+![image-20200310201311367](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200310201311367.png)
+
+这个就类似于SVN或者Git的版本号，如果没有人更改过，就能够正常提交，否者需要先将代码pull下来，合并代码后，然后提交
+
+## CAS底层原理
+
+首先我们先看看 atomicInteger.getAndIncrement()方法的源码
+
+![image-20200310203030720](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200310203030720.png)
+
+从这里能够看到，底层又调用了一个unsafe类的getAndAddInt方法
+
+### 1、unsafe类
+
+![image-20200310203350122](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200310203350122.png)
+
+Unsafe是CAS的核心类，由于Java方法无法直接访问底层系统，需要通过本地（Native）方法来访问，Unsafe相当于一个后门，基于该类可以直接操作特定的内存数据。Unsafe类存在sun.misc包中，其内部方法操作可以像C的指针一样直接操作内存，因为Java中的CAS操作的执行依赖于Unsafe类的方法。
+
+```
+注意Unsafe类的所有方法都是native修饰的，也就是说unsafe类中的方法都直接调用操作系统底层资源执行相应的任务
+```
+
+为什么Atomic修饰的包装类，能够保证原子性，依靠的就是底层的unsafe类
+
+### 2、变量valueOffset
+
+表示该变量值在内存中的偏移地址，因为Unsafe就是根据内存偏移地址获取数据的。
+
+![image-20200310203030720](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200310203030720.png)
+
+从这里我们能够看到，通过valueOffset，直接通过内存地址，获取到值，然后进行加1的操作
+
+### 3、变量value用volatile修饰
+
+保证了多线程之间的内存可见性
+
+![image-20200310210701761](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/image-20200310210701761.png)
+
+var5：就是我们从主内存中拷贝到工作内存中的值
+
+那么操作的时候，需要比较工作内存中的值，和主内存中的值进行比较
+
+假设执行 compareAndSwapInt返回false，那么就一直执行 while方法，直到期望的值和真实值一样
+
+- val1：AtomicInteger对象本身
+- var2：该对象值得引用地址
+- var4：需要变动的数量
+- var5：用var1和var2找到的内存中的真实值
+  - 用该对象当前的值与var5比较
+  - 如果相同，更新var5 + var4 并返回true
+  - 如果不同，继续取值然后再比较，直到更新完成
+
+这里没有用synchronized，而用CAS，这样提高了并发性，也能够实现一致性，是因为每个线程进来后，进入的do while循环，然后不断的获取内存中的值，判断是否为最新，然后在进行更新操作。
+
+假设线程A和线程B同时执行getAndInt操作（分别跑在不同的CPU上）
+
+1. AtomicInteger里面的value原始值为3，即主内存中AtomicInteger的 value 为3，根据JMM模型，线程A和线程B各自持有一份价值为3的副本，分别存储在各自的工作内存
+2. 线程A通过getIntVolatile(var1 , var2) 拿到value值3，这是线程A被挂起（该线程失去CPU执行权）
+3. 线程B也通过getIntVolatile(var1, var2)方法获取到value值也是3，此时刚好线程B没有被挂起，并执行了compareAndSwapInt方法，比较内存的值也是3，成功修改内存值为4，线程B打完收工，一切OK
+4. 这是线程A恢复，执行CAS方法，比较发现自己手里的数字3和主内存中的数字4不一致，说明该值已经被其它线程抢先一步修改过了，那么A线程本次修改失败，只能够重新读取后在来一遍了，也就是在执行do while
+5. 线程A重新获取value值，因为变量value被volatile修饰，所以其它线程对它的修改，线程A总能够看到，线程A继续执行compareAndSwapInt进行比较替换，直到成功。
+
+Unsafe类 + CAS思想： 也就是自旋，自我旋转
+
+## 底层汇编
+
+Unsafe类中的compareAndSwapInt是一个本地方法，该方法的实现位于unsafe.cpp中
+
+- 先想办法拿到变量value在内存中的地址
+- 通过Atomic::cmpxchg实现比较替换，其中参数X是即将更新的值，参数e是原内存的值
+
+## CAS缺点
+
+CAS不加锁，保证一次性，但是需要多次比较
+
+- 循环时间长，开销大（因为执行的是do while，如果比较不成功一直在循环，最差的情况，就是某个线程一直取到的值和预期值都不一样，这样就会无限循环）
+- 只能保证一个共享变量的原子操作
+  - 当对一个共享变量执行操作时，我们可以通过循环CAS的方式来保证原子操作
+  - 但是对于多个共享变量操作时，循环CAS就无法保证操作的原子性，这个时候只能用锁来保证原子性
+- 引出来ABA问题？
+
+## ABA问题
+
+。。。。。。。。。
+
+## 总结
+
+### CAS
+
+CAS是compareAndSwap，比较当前工作内存中的值和主物理内存中的值，如果相同则执行规定操作，否者继续比较直到主内存和工作内存的值一致为止
+
+### CAS应用
+
+CAS有3个操作数，内存值V，旧的预期值A，要修改的更新值B。当且仅当预期值A和内存值V相同时，将内存值V修改为B，否者什么都不做
+
