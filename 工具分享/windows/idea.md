@@ -14,3 +14,16 @@
 
 ![image-20201024111827324](https://gitee.com/cuixiaoyan/uPic/raw/master/uPic/202010/24/111829-327986.png)
 
+
+
+# 插件
+
+- Alibaba Java Coding Guidelines    阿里巴巴代码检验
+- Free Mybatis plugin  mapper跳xml
+- JRebel   热部署需要激活
+- Key Promoter X 代码快捷键
+- Lombok 省略getset
+- Nyan Progress Bar 彩虹猫
+- mybatis log plugin 日志显示 在application.properties中添加配置
+  mybatis.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl
+- 
