@@ -26,4 +26,6 @@
 - Nyan Progress Bar 彩虹猫
 - mybatis log plugin 日志显示 在application.properties中添加配置
   mybatis.configuration.log-impl=org.apache.ibatis.logging.stdout.StdOutImpl
-- 
+
+# 快捷键
+
