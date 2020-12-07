@@ -145,12 +145,6 @@
 
   > `$ :685,686d`
 
-
-
-![image](data:image/svg+xml;utf8,<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="800" height="600"></svg>)
-
-
-
 # 五、复制和剪切命令
 
 | 命令    | 作用                       |

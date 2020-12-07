@@ -1,119 +1,5 @@
 # 目录
 
-- 文件操作
-  - [head](#head)
-  - [tail](#tail)
-  - [ls](#ls)
-  - [pwd](#pwd)
-  - [wc](#wc)
-  - [find](#find)
-  - [mkdir](#mkdir)
-  - [mktemp](#mktemp)
-  - [chattr](#chattr)
-  - [more](#more)
-  - [paste](#paste)
-  - [stat](#stat)
-  - [grep](#grep)
-  - [touch](#touch)
-  - [cd](#cd)
-  - [rm](#rm)
-  - [rmdir](#rmdir)
-  - [cp](#cp)
-  - [cat](#cat)
-  - [mv](#mv)
-  - [locate](#locate)
-  - [open](#open)
-  - [source](#source)
-  - [tree](#tree)
-  - [ln](#ln)
-  - [file](#file)
-- 系统管理
-  - [top](#top)
-  - [whoami](#whoami)
-  - [nohup](#nohup)
-  - [watch](#watch)
-  - [ping](#ping)
-  - [which](#which)
-  - [last](#last)
-  - [shutdown](#shutdown)
-  - [reboot](#reboot)
-  - [ps](#ps)
-  - [uptime](#uptime)
-  - [crontab](#crontab)
-  - [su](#su)
-  - [uname](#uname)
-  - [ifconfig](#ifconfig)
-  - [who](#who)
-  - [whereis](#whereis)
-  - [kill](#kill)
-  - [killall](#killall)
-  - [chmod](#chmod)
-  - [lsof](#lsof)
-  - [netstat](#netstat)
-  - [w](#w)
-  - [chown](#chown)
-  - [systemctl](#systemctl)
-  - [service](#service)
-  - [free](#free)
-  - [jobs](#jobs)
-  - [type](#type)
-  - [printenv](#printenv)
-  - [set](#set)
-  - [export](#export)
-  - [unset](#unset)
-  - [alias](#alias)
-  - [time](#time)
-  - [clear](#clear)
-- 用户管理
-  - [useradd](#useradd)
-  - [userdel](#userdel)
-  - [passwd](#passwd)
-  - [chpasswd](#chpasswd)
-  - [chsh](#chsh)
-  - [users](#users)
-- 压缩、解压
-  - [zip](#zip)
-  - [unzip](#unzip)
-  - [gzip](#gzip)
-  - [bzip2](#bzip2)
-  - [tar](#tar)
-- 加解密
-  - [md5sum](#md5sum)
-  - [base64](#base64)
-- 网络
-  - [wget](#wget)
-  - [curl](#curl)
-  - [scp](#scp)
-- 磁盘
-  - [df](#df)
-  - [du](#du)
-- 包管理
-  - [yum](#yum)
-  - [apt-get](#apt-get)
-- 其他
-  - [目录名称含义](#目录名称含义)
-  - [重定向输入和输出](#重定向输入和输出)
-  - [管道](#管道)
-  - [echo](#echo)
-  - [date](#date)
-  - [man](#man)
-  - [sleep](#sleep)
-  - [history](#history)
-  - [xargs](#xargs)
-  - [cal](#cal)
-  - [expr](#expr)
-  - [bc](#bc)
-  - [timeout](#timeout)
-  - [exit](#exit)
-  - [vim](#vim)
-  - [basename](#basename)
-  - [read](#read)
-  
-
-
-
-
-
 ## 目录名称含义
 | 目录名        | 描述              |
 | ---------- |------------------- |
@@ -136,10 +22,6 @@
 | /tmp   | 临时目录，可以在该目录中创建和删除临时工作文件 |
 | /usr   | 用户二进制目录，大量用户级的GNU工具和数据文件都存储在这里 |
 | /var   | 可变目录，用以存放经常变化的文件，比如日志文件 |
-
-
-
-
 
 ## 重定向输入和输出
 
@@ -165,8 +47,6 @@ history > a.txt
 ```bash
 echo "H" >> log.txt
 ```
-
-
 
 #### 输入重定向
 和输出重定向正好相反，将文件的内容定向到命令。
@@ -197,10 +77,6 @@ wc -l << Hello
 Hello
 ```
 
-
-
-
-
 ## 管道
 将一个命令的输出作为另一个命令的输入称为管道。 管道用 `|` 符号。
 
@@ -212,16 +88,6 @@ ls | wc
 # 执行一个脚本，这没有什么意义，只是一个例子
 echo "./bash.sh" | bash
 ```
-
-
-
-
-
-
-
-
-
-
 
 
 ## head
@@ -237,8 +103,6 @@ head README.md package.json
 # -n 指定显示行数
 head -n 100 README.md
 ```
-
-
 
 
 ## tail
@@ -260,8 +124,6 @@ tail -F README.md
 # 显示文件的最后10个字符
 tail -c README.md
 ```
-
-
 
 
 ## top
@@ -354,20 +216,12 @@ wc -w README.md
 wc -m README.md
 ```
 
-
-
-
-
-
-
 ## whoami
 显示自身的用户名称, 此命令等价于 `id -un`
 
 ```bash
 % whoami # xiejiahe
 ```
-
-
 
 ## alias
 设置命令别名，用于简化较长的命令
@@ -417,8 +271,6 @@ tail -f wget-log   # 查看后台下载进度
 | Use%    | 已用空间所占的比例       |
 | Mounted on    | 设备挂载到了哪个挂载点上       |
 
-
-
 ```bash
 # 显示每个有数据的已挂载文件系统
 # Filesystem     1K-blocks    Used Available Use% Mounted on
@@ -455,8 +307,6 @@ du -s src
 # 显示当前所有已列出文件总大小
 du -c
 ```
-
-
 
 
 ## find
@@ -504,8 +354,6 @@ mkdir -p temp/temp2/temp3
 mkdir -m 777 temp
 ```
 
-
-
 ## mktemp
 创建临时目录或文件，Linux使用 `/tmp` 目录来存放不需要永久保留的文件，大多数Linux发行版配置了系统在启动时自动删除 `/tmp` 目录的所有文件。
 
@@ -523,30 +371,12 @@ mktemp -d dir.XXXXXX
 ```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## touch
 创建一个空文件, 如果文件存在只会修改文件的创建时间
 
 ```bash
 touch README.md
 ```
-
-
-
-
 
 
 ## ssh
@@ -559,8 +389,6 @@ ssh root@192.168.0.0
 # 指定端口号连接
 ssh -p 23 root@192.168.0.0
 ```
-
-
 
 
 ## nohup
@@ -645,8 +473,6 @@ time curl https://github.com/xjh22222228/linux-manual
 clear
 ```
 
-
-
 # rm
 删除指定目录或文件
 
@@ -720,8 +546,6 @@ cp -r home ../home
 cp -i README.md README.md
 ```
 
-
-
 ## which
 查找某个命令存储在哪个位置, 输出绝对路径, `which` 会在环境变量 `$PATH` 设置的目录里去查找。
 
@@ -772,8 +596,6 @@ mv README.md ../README.md
 mv -i README.md ../README.md
 ```
 
-
-
 ## cal
 显示当前日历
 
@@ -792,10 +614,6 @@ Su Mo Tu We Th Fr Sa
 cal -3
 ```
 
-
-
-
-
 ## expr
 执行数学运算，expr 命令比较鸡助，通常在 shell 脚本当中看到。但在shell脚本也不建议用。
 
@@ -811,8 +629,6 @@ expr 1+2 # 这样是不行的
 # 在浮点数计算时会丢失小数， 这里等于 2
 expr 5 / 2
 ```
-
-
 
 
 ## bc
@@ -843,7 +659,6 @@ n=$(echo "scale=2; 5 / 2" | bc)
 
 echo $n
 
-
 # 第二种, 内联重定向，解决第一种表达式过长问题
 n1=$(
 bc << EOF
@@ -855,16 +670,10 @@ EOF
 echo $n1
 ```
 
-
-
-
-
 ## timeout
 在指定时长范围内执行命令，并在规定时间结束后停止进程。
 
 意思是在规定时间内必须完成，否则停止进程。
-
-
 
 ```bash
 # 模拟超过3秒, 因为sleep阻塞5秒所以在3秒内无法完成，则停止进程
@@ -873,12 +682,6 @@ time 3 sleep 5
 # 比如打包, 1分钟内要打包完成，否则停止进程
 time 60 npm run build
 ```
-
-
-
-
-
-
 
 ## exit
 退出当前登录Shell, 可以使用快捷键退出 `Ctrl + D`。
@@ -890,20 +693,12 @@ exit
 ```
 
 
-
-
-
-
-
-
 ## vim
 `vim` 是 `vi` 的升级版，所以只需要知道 `vim` 即可， 是一个非强大的文本编辑器，学习成本不低，需要长期使用才能记牢每一个指令操作。
 
 这是一份速查表，使用的时候注意区分大小写。
 
 vim 的快捷键指令非常多，只列出一些实用性便于记忆。
-
-
 
 **打开文件**
 
@@ -922,10 +717,6 @@ vim +100 README.md
 # :bp 切换上一个文件
 vim 1.txt 2.txt
 ```
-
-
-
-
 
 **光标定位插入**
 
@@ -950,9 +741,8 @@ vim 1.txt 2.txt
 | U   | 撤销当前光标整行内容 |
 | Ctrl + r   | 还原初始文件状态 |
 
-
-
 **删除**
+
 | 快捷键      | 描述              |
 | ---------- |----------------- |
 | dd   | 删除当前行 |
@@ -961,18 +751,11 @@ vim 1.txt 2.txt
 | :1,$d   | 删除所有行 |
 
 
-
-
 **拷贝/粘贴**
 | 快捷键      | 描述              |
 | ---------- |----------------- |
 | yy   | 拷贝当前行 |
 | p   | 在当前光标粘贴上一次拷贝的内容 |
-
-
-
-
-
 
 **搜索**
 
@@ -980,10 +763,6 @@ vim 1.txt 2.txt
 | ---------- |----------------- |
 | :/text   | 从上往下查找 text，按 `n` 向下搜索, 按 `N` 想前搜索 |
 | :?text   | 从下往上查找 text，按 `n` 向下搜索, 按 `N` 想前搜索 |
-
-
-
-
 
 **退出**
 
@@ -994,10 +773,6 @@ vim 1.txt 2.txt
 | :w    | 写入但不退出 |
 | :q!   | 退出但不保存 |
 | :wq   | 保存写入内容并退出 |
-
-
-
-
 
 **设置**
 
@@ -1011,10 +786,6 @@ vim 1.txt 2.txt
 | :set number   | 显示行号 |
 | :set nonumber   | 不显示行号 |
 
-
-
-
-
 ## basename
 打印目录或者文件的基本名称。
 
@@ -1025,8 +796,6 @@ basename /www/index.html
 # 输出 www
 basename /www/
 ```
-
-
 
 
 ## read
@@ -1045,14 +814,6 @@ read -t 5 -p 确认要删除吗？ data
 # —s 隐藏用户输入，比如密码，实际上是将文本颜色设置成背景颜色一样
 read -s -p "请输入您的密码：" data
 ```
-
-
-
-
-
-
-
-
 
 ## last
 显示用户最近登录信息
@@ -1100,8 +861,6 @@ reboot -w
 reboot -i
 ```
 
-
-
 ## uname
 打印系统信息
 
@@ -1126,8 +885,6 @@ uname -m # x86_64
 ```
 
 
-
-
 ## ifconfig
 配置或显示系统网卡的网络参数
 
@@ -1138,8 +895,6 @@ ifconfig
 # 配置网卡IP地址
 ifconfig eth0 192.168.1.111
 ```
-
-
 
 
 ## who
@@ -1162,8 +917,6 @@ who -q
 who -b  # reboot   ~        Jun 15 21:38
 ```
 
-
-
 ## whereis
 用来定位指令的二进制程序、源代码文件和man手册页等相关文件的路径。
 
@@ -1178,8 +931,6 @@ where -b nginx # nginx: /usr/sbin/nginx /usr/lib64/nginx /etc/nginx /usr/share/n
 # -m 指定查找说明文件 man
 whereis -m nginx # nginx: /usr/share/man/man8/nginx.8.gz /usr/share/man/man3/nginx.3pm.gz
 ```
-
-
 
 ## zip
 归档数据，将目录或文件归档为 `.zip` 格式， zip 不是Linux中的标准归档工具。
@@ -1212,8 +963,6 @@ unzip -v demo.zip
 # -d 指定将文件提取到 src 目录下
 unzip demo.zip -d src
 ```
-
-
 
 ## locate
 搜索文件，与 `find` 命令很像，但更快，因为是从数据库里查找, 通常每天会进行数据更新。
@@ -1262,8 +1011,6 @@ kill -l
 kill -u nginx
 ```
 
-
-
 ## killall
 杀死进程，可以杀死多个进程，比 `kill` 要强大, 支持通过进程名称杀死, 还支持通配符。
 
@@ -1271,12 +1018,6 @@ kill -u nginx
 # 杀死以tcp进程名称开头的所有进程
 killall tcp*
 ```
-
-
-
-
-
-
 
 ## chmod
 修改文件或目录权限
@@ -1310,10 +1051,6 @@ chmod [参数选项] [mode, 八进制或符号表示] files...
 | rw-      | 110     |   6   | 有读取和写入权限     |
 | rwx      | 111     |   7   | 有全部权限     |
 
-
-
-
-
 ```bash
 # README.md 文件设为所有用户可读取
 chmod a+r README.md
@@ -1326,8 +1063,6 @@ chmod a+r src/
 # r=4, w=2, x=1
 chmod 777 README.md # 等价于 chmod a=rwx README.md
 ```
-
-
 
 ## lsof
 列出当前系统打开文件的工具
@@ -1385,8 +1120,6 @@ lsof -p 6112
 | -V      | 显示PS命令的版本号       |
 
 
-
-
 ```bash
 # 显示所有进程信息
 ps -A
@@ -1424,8 +1157,6 @@ open https://github.com/xjh22222228/linux-manual.git
 # 指定某个应用程序打开某个文件, 如果不指定文件默认直接打开程序
 open -a /Applications/Google\ Chrome.app README.md
 ```
-
-
 
 ## curl
 `curl` 是一个非常强大的网络传输工具, 利用URL规则在命令行下工作的文件传输工具。
@@ -1622,8 +1353,6 @@ chown -R byroot src/
 chown byroot:byrootgroup README.md
 ```
 
-
-
 ## uptime
 查看系统负载信息， 此命令非常简单，没有太多的参数。
 
@@ -1634,8 +1363,6 @@ chown byroot:byrootgroup README.md
 # load average: 0.08, 0.07, 0.06    一分钟、5分钟、15分钟平均负载, 这3个值不能大于CPU个数，如果大于了说明系统负载高，性能低。
 uptime # 21:51:53 up 750 days, 13:24,  1 user,  load average: 0.08, 0.07, 0.06
 ```
-
-
 
 ## chattr
 用于修改文件属性
@@ -1731,12 +1458,6 @@ tar -xvf demo.tar
 ```
 
 
-
-
-
-
-
-
 ## more
 分页查看文件内容, 每次查看一屏, 每屏能显示多少内容取决于终端大小。
 
@@ -1757,8 +1478,6 @@ more +10 README.md
 # 显示查看进度
 more -d README.md # --More--(17%)[Press space to continue, 'q' to quit.]
 ```
-
-
 
 ## crontab
 周期性执行任务, 通常用于定时备份。
@@ -1864,8 +1583,6 @@ sleep 10s
 curl https://www.xiejiahe.com/
 ```
 
-
-
 ## source
 在当前Shell环境中从指定文件读取和执行命令， 通常用于重新执行环境。
 
@@ -1873,8 +1590,6 @@ curl https://www.xiejiahe.com/
 ```bash
 source ~/.bash_profile  # 等价 . ~/.bash_profile
 ```
-
-
 
 
 ## paste
@@ -1887,8 +1602,6 @@ paste 1.txt 2.txt
 # 1.txt 2.txt 合并后保存为 3.txt
 paste 1.txt 2.txt > 3.txt
 ```
-
-
 
 ## stat
 用于显示文件或目录的状态信息
@@ -1904,8 +1617,6 @@ stat logs
 # Change: 2020-07-12 11:46:55.567707577 +0800
 # Birth: -
 ```
-
-
 
 ## tree
 生成目录树结构, 通常用于描述项目结构。
@@ -1930,8 +1641,6 @@ tree -d
 # 指定要递归的目录层级
 tree -L 3
 ```
-
-
 
 ## yum
 基于RPM的软件包管理器, 特点安装快捷，命令简洁好记。
@@ -1966,8 +1675,6 @@ yum check-update
 ```
 
 
-
-
 ## history
 列出当前系统使用过的命令，默认保存1000条, 通常保存在 `~/.bash_history` 文件中，注意的是只有在Shell退出时才写入到文件。
 
@@ -1987,8 +1694,6 @@ history -a
 ```
 
 
-
-
 ## md5sum
 计算和校验文件报文摘要
 
@@ -2000,8 +1705,6 @@ mmd5sum README.md # d41d8cd98f00b204e9800998ecf8427e  README.md
 md5sum README.md > README.md5 # 计算文件md5并保存在 README.md5 , 保存的文件名和后缀可以随意命名
 md5sum -c README.md5 # -c 从指定的文件读取md5并校验, 会从当前目录寻找 README.md
 ```
-
-
 
 ## su
 切换到其他用户。
@@ -2032,10 +1735,6 @@ cat download.txt | xargs wget
 ```
 
 
-
-
-
-
 ## scp
 加密的方式在本地主机和远程主机之间复制文件
 
@@ -2054,8 +1753,6 @@ scp /home/file.zip root@192.168.0.100:/root/file.zip
 # # 从本地主机上传目录到远程主机，需要 -r 递归
 scp -r /home/dir root@192.168.0.100:/root/dir
 ```
-
-
 
 ## grep
 强大的文本搜索工具，被称为Linux命令三剑客。
@@ -2084,16 +1781,10 @@ grep -r "linux" ./src
 egrep "[0-9]" # 等价于 grep -E "[0-9]" README.md
 ```
 
-
-
-
-
 ## systemctl
 系统服务管理器指令, 通常用来设置某个服务器默认开机启动或关闭。
 
 命令：`systemctl [command] [unit]`
-
-
 
 ```bash
 # 立即启动服务
@@ -2124,8 +1815,6 @@ systemctl is-active nginx.service
 systemctl is-enable nginx.service
 ```
 
-
-
 ## base64
 base64 编码/解码文件或标准输入输出
 
@@ -2142,8 +1831,6 @@ base64 README.md > decode.txt
 # 从标准输入中读取已经进行base64编码的内容进行解码
 base64 -d decode.txt
 ```
-
-
 
 
 ## ln
@@ -2173,8 +1860,6 @@ ln -f README.md ./src/a.md
 ```
 
 
-
-
 ## service
 管理操作系统服务的命令, 是Redhat Linux兼容的发行版中用来控制系统服务的实用工具，它以启动、停止、重新启动和关闭系统服务，还可以显示所有系统服务的当前状态。
 
@@ -2194,8 +1879,6 @@ service docker restart
 # 查看所有服务状态
 service --status-all
 ```
-
-
 
 ## free
 显示内存使用情况
@@ -2231,8 +1914,6 @@ free - m
 free -s 10
 ```
 
-
-
 ## apt-get
 **apt-get命令** 是Debian Linux发行版中的APT软件包管理工具。所有基于Debian的发行都使用这个包管理系统。
 
@@ -2253,8 +1934,6 @@ apt-get upgrade
 apt-get clean
 ```
 
-
-
 ## file
 查看文件类型, 比如文件、目录、二进制、符号链接等
 
@@ -2266,8 +1945,6 @@ file README.md
 file index.html
 ```
 
-
-
 ## jobs
 显示当前运行在后台模式中的所有用户的进程（作业）
 
@@ -2277,8 +1954,6 @@ sleep 3 &
 # 查看后台进程
 jobs # 输出：[1]+  Running       sleep 3 &
 ```
-
-
 
 ## type
 `type` 命令有2个作用：
@@ -2297,8 +1972,6 @@ type cd
 type ps
 ```
 
-
-
 ## printenv
 列出全局环境变量, 有个 `env` 命令很像，但 `printenv` 可以打印变量的值。
 
@@ -2311,8 +1984,6 @@ printenv
 # 也可以显示指定全局环境变量的值, 等价于 echo $HOME
 printenv HOME # /root
 ```
-
-
 
 
 ## set
@@ -2330,8 +2001,6 @@ set
 ```
 
 
-
-
 ## export
 导出环境变量, 可以把一个局部变量导出成全局环境变量
 
@@ -2344,8 +2013,6 @@ export my_var
 ```
 
 
-
-
 ## unset
 删除环境变量
 
@@ -2356,18 +2023,12 @@ export my_var
 unset HOME
 ```
 
-
-
-
-
 ## useradd
 给系统添加新用户
 
 注：
 - 在创建新用户时如果不指定具体的值，就会使用系统那些默认值。
 - 在创建新用户时如果未指定密码，需要使用 `passwd` 命令进行更改。
-
-
 
 #### useradd 命令行参数
 | 参数        | 描述              |
@@ -2399,10 +2060,6 @@ unset HOME
 | -g group      | 更改默认的组名称或GID     |
 | -s shell      | 更改默认的登录shell     |
 
-
-
-
-
 ```bash
 # -D, 查看默认值
 useradd -D
@@ -2427,10 +2084,6 @@ passwd test # 通过passwd修改指定用户密码
 添加新用户后可以执行 `cat /etc/passwd` 查看用户列表。
 
 
-
-
-
-
 ## userdel
 删除用户
 
@@ -2442,8 +2095,6 @@ userdel 用户名
 # -r 用来删除用户目录， 之前创建的 /home/用户名 就不存在了, 使用-r参数需要小心，要检查是否有重要文件。
 userdel -r 用户名
 ```
-
-
 
 ## passwd
 修改用户密码, 只有 `root` 用户才有权限修改别人的密码。
@@ -2459,14 +2110,10 @@ passwd test
 ```
 
 
-
-
 ## chpasswd
 类似 `passwd` 命令也是用于修改用户密码，但它支持批量修改用户。
 
 `chpasswd` 命令从标准输入自动读取登录名和密码对（由冒号分割）列表，给密码加密。
-
-
 
 ```bash
 # 利用输入重定向从文本中读取
@@ -2491,10 +2138,6 @@ admin:youyouyou00..11
 # 必须使用完整路径，不能使用shell名
 chsh -s /bin/sh
 ```
-
-
-
-
 
 
 ## users

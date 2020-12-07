@@ -78,15 +78,11 @@ doc/*.txt    #会忽略 doc/notes.txt 但不包括 doc/server/arch.txt
 
 3.  git push -u gitee master 提交远程
 
-   
-
 # 提交GitHub
 
 1. git remote add github https://github.com/cuixiaoyan/docker.git   绑定gitbub
 2. git pull --rebase github master  合并一下，如果生成仓库的时候，有生成文件。
 3. git push -u github master 提交远程
-
-
 
 # 常用命令
 
