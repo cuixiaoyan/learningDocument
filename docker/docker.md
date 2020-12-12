@@ -41,8 +41,6 @@ systemctl start docker
 # 设置开机自启
 [root@centos8 ~]# systemctl enable docker
 Created symlink /etc/systemd/system/multi-user.target.wants/docker.service → /usr/lib/systemd/system/docker.service.
-[root@centos8 ~]# 
-
 
 #6. 使用docker version查看是否安装成功
 docker version
